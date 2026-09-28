@@ -15,7 +15,7 @@ screenshots of the working report.
 # HealthStat — elective hip replacement
 
 **26,286** discharges · **151** facilities · **627** surgeons ·
-**2.65 days** average stay · **$20.9K** average cost
+**2.65 days** average stay · **\$20.9K** average cost
 
 Six report pages over every elective total and partial hip replacement
 discharged from a New York State hospital in a single year, built around one
@@ -74,7 +74,7 @@ separated by a dotted rule so it cannot be misread as a fifteenth night.
 
 ## Cost and charges
 
-Cost per discharge runs from $7.7K to $84.6K — an eleven-fold spread. What a
+Cost per discharge runs from \$7.7K to \$84.6K — an eleven-fold spread. What a
 hospital bills tracks what it spends only loosely: the statewide markup is
 2.84×, and individual facilities sit a long way either side of it — some
 billing barely above cost, others several times it.
@@ -94,9 +94,9 @@ Half of all charges land in New York City.
   <img alt="Cost and charges, distribution view" src="docs/healthstat/img/cost-spread-dark.webp">
 </picture>
 
-The same idea applied to cost, in $2.5K bands with everything above $50K capped
-into the last column. Half of all discharges cost under $18.6K against a $20.9K
-mean — 711 of them cost $50K or more, and those are what move the average. The
+The same idea applied to cost, in \$2.5K bands with everything above \$50K capped
+into the last column. Half of all discharges cost under \$18.6K against a \$20.9K
+mean — 711 of them cost \$50K or more, and those are what move the average. The
 banding is a calculated column rather than something the chart does, so each bar
 remains a real value of a real field.
 
@@ -105,7 +105,7 @@ remains a real value of a real field.
 Does doing more of an operation make a hospital better at it? Only six of 151
 programmes do 600 or more a year, and they handle 36% of the state's volume.
 Those programmes average 2.42 days against 3.20 at programmes under 200, and do
-it $2.0K cheaper per discharge — and the gap survives severity adjustment, at
+it \$2.0K cheaper per discharge — and the gap survives severity adjustment, at
 0.92× expected stay against 1.20×.
 
 <picture>
@@ -153,17 +153,327 @@ facilities is selected.
 
 ## How it is built
 
+### The data
+
+New York State SPARCS de-identified inpatient discharge data, public at source,
+loaded straight from one CSV and filtered in Power Query to a single procedure:
+
+```m
+#"Filtered Rows" = Table.SelectRows(
+    #"Changed Type",
+    each ([ccs_procedure_description] = "HIP REPLACEMENT,TOT/PRT")
+)
+```
+
+That leaves **26,286 rows and 30 columns — one row per inpatient stay**, across
+151 facilities and a single discharge year. The columns fall into five families:
+
+| Family | Columns |
+|---|---|
+| Where | health service area, hospital county, facility id and name, operating certificate |
+| Who | age group, 3-digit ZIP, gender, race, ethnicity |
+| Clinical | CCS diagnosis and procedure, APR-DRG, APR-MDC, severity of illness, risk of mortality, medical/surgical |
+| Pathway | type of admission, patient disposition, length of stay in nights |
+| Money | total charges, total costs |
+
+Two things the extract does **not** contain shaped the whole report. There is no
+date finer than the year, so there is no trend to analyse. And there is no
+patient key, so there is no readmission, no journey and no outcome beyond
+discharge disposition. The demographic columns exist but are deliberately left
+out of the analysis; severity and risk of mortality carry the case-mix work
+instead.
+
+Length of stay is an integer count of nights, which is why the distribution view
+is a histogram over whole numbers rather than a density curve.
+
+### The model
+
+One fact table, three related dimension tables, and a set of deliberately
+**disconnected** helper tables. Only three relationships exist in the whole
+model:
+
+```
+hospital_discharges[facility_name]    →  surgical_program_size_summary[facility_name]
+hospital_discharges[Patient Region]   →  'Home Region'[Region]
+hospital_discharges[hospital_county]  →  'Map County'[Data County]
+```
+
+Everything else — the theme palette, the metric pickers, the driver band list —
+is joined to nothing on purpose, so selecting in it changes what a visual *shows*
+without changing what the page *counts*.
+
+**Three calculated columns** do work the source file could not — `Age Bins`
+collapses the age groups to a single over/under-50 split, and these two:
+
+```dax
+-- Home region of the patient, from the 3-digit ZIP, so "where they live"
+-- can be compared against "where they were treated"
+Patient Region =
+VAR z = hospital_discharges[zip_code_3_digits]
+RETURN
+SWITCH (
+    TRUE (),
+    z = "OOS", "Out of state",
+    z IN { "100", "101", "102", "103", "104", "111", "112", "113", "114", "116" }, "New York City",
+    z IN { "105", "106", "107", "108", "109", "124", "125", "126", "127" },        "Hudson Valley",
+    ...
+    "Unknown"
+)
+```
+
+```dax
+-- What one discharge costs, floored into $2,500 bands and capped, so the top
+-- band means "$50,000 and above". Evaluated once, at refresh.
+Cost Band = MIN ( INT ( hospital_discharges[total_costs] / 2500 ) * 2500, 50000 )
+```
+
+#### Why calculated tables
+
+The rule the whole model turns on: **a measure can be displayed, but only a
+column can be grouped by, sorted on, placed on an axis, put in a slicer, or
+clicked to cross-filter the page.** Every calculated table here exists because
+something needed to be a real column.
+
+| Table | What it is | Why it had to be a table |
+|---|---|---|
+| `surgical_program_size_summary` | `SUMMARIZECOLUMNS` of facility → discharges, surgeons | Programme size is a property of the *facility*, not of the current filter. Materialised at refresh it becomes a real column that can be binned (200-wide) and banded into `<200 / 200–399 / 400–599 / ≥600` — a dimension the value page slices, colours and cross-filters on. As a measure it could be shown and nothing more. |
+| `Driver Bands` | `UNION` of five `SELECTCOLUMNS`, giving every *(dimension, category)* pair as `Group` / `Band` | A field parameter substitutes the referenced column at query time, so the dataset column **name** changes with the slicer — and a hand-laid-out Vega spec needs a stable name. Here `Group` and `Band` are ordinary columns with fixed names, and the dimension label is available per row rather than through `SELECTEDVALUE`. Being disconnected, it also cannot filter the page from underneath the comparison it is describing. |
+| `Refresh Stamp` | `ROW ( "Stamp", NOW () )` | A calculated table is evaluated at refresh, so the landing page can honestly say when the data was **loaded**. The same expression in a measure reports query time — which is to say, always "now", which is a lie. |
+| `Theme` | 15 colour tokens × 2 rows (Dark, Light) | Each page pins it with a hidden single-select slicer, so one set of HTML and SVG measures serves both the dark and the light page sets. Without it the report would be two reports. |
+| `Break down by`, `Compare by` | Field parameters (`NAMEOF`) | Let one visual switch between five measures or four dimensions without five copies of the visual and five bookmarks holding them. |
+| `Home Region`, `Profile Metric`, `Access Measure` | `DATATABLE` literals with an explicit sort order | Ordered, stable labels for "what should this visual show", with no filter path into the fact table. The order column is what stops Power BI alphabetising a sequence that is not alphabetical. |
+| `Map County` | County → region lookup with lat/long and a `County` data category | Gives the choropleth a geography to bind to that the discharge table does not carry. |
+
 ### Severity adjustment
 
-Expected stay and expected cost come from indirect standardisation: each
-facility is scored against the statewide figure for its *own* severity mix,
-summed back over its case distribution. The observed-to-expected ratio is then
-what the pages actually rank on, rather than the raw average.
+Expected stay and expected cost come from **indirect standardisation**: score
+every facility against the statewide figure for its *own* severity mix, then
+compare what actually happened to that.
 
-> Written with `SUMX` over the severity values and `ALLEXCEPT` to hold the
-> severity level while releasing the facility — cheap evaluated once for the
-> state, ruinous if evaluated per facility across 151 rows. Where that bit, the
-> aggregation was restructured rather than the visual simplified.
+$$
+E_f \;=\; \frac{\sum_{s} n_{f,s}\,\bar{y}_{s}}{\sum_{s} n_{f,s}}
+\qquad\qquad
+\mathrm{O{:}E}_f \;=\; \frac{\bar{y}_f}{E_f}
+$$
+
+where $n_{f,s}$ is facility $f$'s discharges at severity level $s$, and
+$\bar{y}_s$ is the statewide mean for that severity level. An O:E of 1.00 means
+"exactly what this case mix predicts"; 1.20 means twenty per cent longer than
+predicted.
+
+```dax
+Expected LOS Days =
+DIVIDE (
+    SUMX (
+        VALUES ( hospital_discharges[apr_severity_of_illness_description] ),
+        VAR vN = [Total Discharges]
+        VAR vStateAvg =
+            CALCULATE (
+                [Average LOS Days],
+                -- hold the severity level put by context transition,
+                -- strip the facility and every geography filter
+                ALLEXCEPT ( hospital_discharges,
+                            hospital_discharges[apr_severity_of_illness_description] ),
+                REMOVEFILTERS ( surgical_program_size_summary ),
+                REMOVEFILTERS ( 'Home Region' ),
+                REMOVEFILTERS ( 'Map County' )
+            )
+        RETURN vN * vStateAvg
+    ),
+    [Total Discharges]
+)
+
+LOS O to E Ratio = DIVIDE ( [Average LOS Days], [Expected LOS Days] )
+```
+
+> Cheap evaluated once for the state, ruinous evaluated per facility across 151
+> rows. Where that bit, the aggregation was restructured rather than the visual
+> simplified.
+
+### The measures behind the KPIs
+
+183 measures, of which 29 build HTML, 4 build SVG, 17 return formatted strings
+for titles and captions, and 15 are colour tokens. The arithmetic underneath is
+mostly ordinary — the work is in what each one is allowed to see.
+
+| On screen | Formula |
+|---|---|
+| Average stay | $\bar{y} = \dfrac{1}{n}\sum_i \mathrm{los}_i$ |
+| Median stay | 50th percentile of nights — reported beside the mean precisely because they disagree |
+| Cost per discharge | $\dfrac{\sum_i \mathrm{cost}_i}{n}$ |
+| Charge : cost | $\dfrac{\sum_i \mathrm{charges}_i}{\sum_i \mathrm{costs}_i}$ — a ratio of sums, not a mean of ratios |
+| Discharges per surgeon | $\dfrac{n}{\lvert \{\text{operating provider}\} \rvert}$ |
+| Expected stay / cost | $\sum_s n_s \bar{y}_s \,/\, \sum_s n_s$ |
+| O : E ratio | observed $/$ expected |
+| % home at discharge | share of discharges whose disposition begins "Home" |
+| Above expected | $\lvert \{f : \mathrm{O{:}E}_f > 1\} \rvert$ |
+| High-volume share | discharges at facilities doing $\geq 600$ a year $/$ all discharges |
+| Access | residents of a region reaching a $\geq 600$ programme $/$ residents of that region |
+| Cost band | $\min\!\left(2500\left\lfloor \tfrac{\mathrm{cost}}{2500} \right\rfloor,\; 50000\right)$ |
+
+The one that is not ordinary is the scatter's outlier test. It fits the
+volume–outcome trend by least squares on $\log_{10}$ of caseload, then
+standardises the residuals on **median and MAD** rather than mean and standard
+deviation — because the outliers being looked for are exactly what would inflate
+a standard deviation and hide themselves:
+
+$$
+\hat{y}_i = a + b\log_{10} n_i
+\qquad
+r_i = y_i - \hat{y}_i
+\qquad
+z_i = \frac{0.6745\,\bigl(r_i - \mathrm{med}(r)\bigr)}{\mathrm{MAD}(r)}
+$$
+
+```dax
+VAR vRes = ADDCOLUMNS ( vFit, "@r", [@y] - ( vA + vB * [@x] ) )
+VAR vMed = MEDIANX ( vRes, [@r] )
+VAR vMAD = MEDIANX ( vRes, ABS ( [@r] - vMed ) )
+RETURN
+    IF (
+        vN < 10 || vMAD = 0 || COALESCE ( vThisN, 0 ) < vMinN,
+        BLANK (),
+        DIVIDE ( 0.6745 * ( ( vThisY - ( vA + vB * LOG10 ( vThisN ) ) ) - vMed ), vMAD )
+    )
+```
+
+> The comment left in the model is the honest one: this re-fits the line for
+> every point the scatter draws, so it is O(n²) over facilities. At 151 that is
+> fine; on a larger cohort it would want a calculated table instead.
+
+A second kind of guard runs through the ranked measures — a **minimum volume
+floor**, applied identically everywhere a facility is named as best or worst:
+
+```dax
+Min Volume = 50
+
+Max Facility LOS =
+CALCULATE (
+    MAXX (
+        FILTER ( VALUES ( hospital_discharges[facility_name] ),
+                 [Total Discharges] >= [Min Volume] ),
+        [Average LOS Days]
+    ),
+    ALL ( hospital_discharges[facility_name] ),
+    REMOVEFILTERS ( surgical_program_size_summary )
+)
+```
+
+Thirteen measures take extremes or ranks over facilities, and all thirteen apply
+the same floor. They have to: a written banner naming a different worst hospital
+from the card directly above it is worse than no banner at all.
+
+### The custom visuals
+
+#### Deneb — Vega, not Vega-Lite
+
+The distribution views, the region map and the range tracks are hand-written Vega
+specs. Vega rather than Vega-Lite because these need signals, multiple derived
+datasets and explicit pixel geometry — none of which Vega-Lite exposes.
+
+The histogram projects **two fields only**, `length_of_stay` and
+`Total Discharges`, and derives everything else in the spec. Folding the tail is
+a `filter` plus an `aggregate`, and the mean is taken from the *unfolded* data so
+the fold cannot bias it:
+
+```js
+// clean rows, plus the weighted pieces the true mean needs —
+// taken BEFORE the fold, so folding the tail cannot bias it
+{ name: 'raw', source: 'dataset', transform: [
+    { type: 'formula', as: 'wt', expr: "datum['length_of_stay'] * datum['Total Discharges']" } ] },
+{ name: 'stat', source: 'raw', transform: [
+    { type: 'aggregate', fields: ['wt', 'Total Discharges'], ops: ['sum','sum'], as: ['wsum','nsum'] } ] },
+
+// nights 1..14 keep their own row, so each column's datum still carries
+// length_of_stay and can cross-filter on it directly
+{ name: 'body', source: 'raw', transform: [
+    { type: 'filter', expr: "datum['length_of_stay'] <= 14" } ] },
+{ name: 'tailAgg', source: 'raw', transform: [
+    { type: 'filter', expr: "datum['length_of_stay'] > 14" },
+    { type: 'aggregate', fields: ['Total Discharges'], ops: ['sum'], as: ['n'] } ] },
+```
+
+Cross-filtering is what makes it a visual rather than a picture. A normal column
+emits the value it stands for; the folded column stands for a *range*, so it
+emits a literal predicate instead:
+
+```js
+{ name: 'tailExpr', value: "datum['length_of_stay'] > 14" },
+{ name: 'pbiCrossFilterSelection', value: [], on: [
+  { events: { source: 'scope', type: 'mouseup', markname: 'data-point' },
+    update: "pbiCrossFilterApply(event, \"datum['length_of_stay'] == _{length_of_stay}_\")" },
+  { events: { source: 'scope', type: 'mouseup', markname: 'tail-point' },
+    update: "pbiCrossFilterApply(event, tailExpr)" },
+  { events: { source: 'view', type: 'mouseup',
+              filter: ["!event.item || event.item.mark.name != 'data-point'"] },
+    update: "pbiCrossFilterClear()" } ] },
+```
+
+The cost histogram works the same way, except that its banding is a calculated
+column rather than something the spec does. Folding a tail inside the chart
+would make it a picture; folding it in the model keeps every bar a real value of
+a real field, which is the only thing a reader can click.
+
+Small decisions that only show up once it is on screen: the median and mean
+markers are drawn **behind** the bars so each descends from its label into the
+column it marks; the mean marker is deliberately *not* the bars' own hue, because
+the first version was invisible where it crossed one; and a count label moves
+inside its bar when the bar is tall enough to hold it.
+
+```js
+// label sits inside the column when there is room, above it when there is not
+y:    { signal: "scale('y', datum.n) + (scale('y',0) - scale('y',datum.n) > 24 ? 15 : -7)" },
+fill: { signal: "scale('y',0) - scale('y',datum.n) > 24 ? '#06211F' : '#7B93A3'" },
+```
+
+#### HTML and SVG measures
+
+The KPI heroes and tiles are not native cards. Each is a single DAX measure that
+returns markup, rendered by an HTML Content visual — which buys exact control
+over layout, and lets the same measure serve both themes by reading its colours
+from the `Theme` table instead of hard-coding them.
+
+```dax
+HTML Hero LOS =
+VAR cInk    = [Theme Ink]          -- every colour is a token, never a literal
+VAR vAvg    = [Average LOS Days]
+VAR vMin    = [Min Facility LOS]
+VAR vMax    = [Max Facility LOS]
+-- COALESCE: a one-facility cohort makes this 0/0, and a blank width
+-- renders as the literal string "%" in the markup
+VAR vPct    = COALESCE ( ROUND ( 100 * DIVIDE ( vAvg - vMin, vMax - vMin ), 1 ), 0 )
+RETURN
+"<div style='font-family:Arial,Helvetica,sans-serif'>" &
+  "<span style='font-size:56px;font-weight:700;color:" & cInk & "'>" &
+      FORMAT ( vAvg, "0.00", "en-US" ) & "</span>" &
+  "<span style='...;padding:0 0 7px 7px'>days</span>" &
+  -- the thumb is 18px wide, so its travel is the track minus its own width;
+  -- without the clamp it overhangs the end of the track at 100%
+  "<div style='position:absolute;width:18px;height:18px;border-radius:50%;" &
+    "background:" & cInk & ";left:calc(" &
+      FORMAT ( DIVIDE ( vPct, 100 ), "0.0000", "en-US" ) & " * (100% - 18px))'></div>" &
+"</div>"
+```
+
+The same approach writes the prose. Insight banners are measures that resolve
+names, figures and the sentence around them under whatever filter is live, and
+rewrite themselves when a selection would make the usual sentence nonsense:
+
+```dax
+VAR vFac =
+    -- the same population the KPI card and the ranked chart use
+    FILTER ( VALUES ( hospital_discharges[facility_name] ),
+             [Total Discharges] >= [Min Volume] )
+VAR vN = COUNTROWS ( vFac )
+RETURN
+    IF ( COALESCE ( vN, 0 ) = 0, "",        -- nothing in scope: say nothing
+    IF ( vN <= 1, vSingle,                  -- one facility: no "spread" to report
+                  vCohort ) )               -- the normal sentence
+```
+
+Facility names are trimmed of their house style in the same measure, so the
+sentence reads the way a person would write it rather than the way the source
+file spells it.
 
 ### Nothing on screen is typed twice
 
@@ -175,19 +485,6 @@ what the pages actually rank on, rather than the raw average.
   correctly for one hospital or the whole state.
 - **Sentences are guarded.** A selection that collapses a comparison rewrites
   the sentence rather than printing a degenerate one.
-
-### Custom visuals where the native ones could not reach
-
-- **Deneb (Vega, not Vega-Lite)** for the distribution views, the region map and
-  the range tracks — anywhere the shape of the answer mattered more than the
-  convenience of a built-in chart.
-- **Banding lives in the model, not the spec.** Stay and cost bands are
-  calculated columns, because a visual can only cross-filter on a real column.
-  Folding a tail inside the chart would make it a picture; folding it in the
-  model keeps every bar a real value.
-- **HTML and SVG measures** for the KPI tiles and range sliders, which gives
-  exact control over layout and lets the same markup re-theme from the colour
-  table.
 
 ### Judgement calls worth naming
 
@@ -203,12 +500,9 @@ what the pages actually rank on, rather than the raw average.
   measure is a function of stay length, emitting a filter on stay length would
   pin the variable and flatten the page.
 
-## Data
+## A note on what is published
 
-New York State SPARCS de-identified inpatient discharge data, filtered to
-elective total and partial hip replacements, for a single discharge year. The
-dataset is public and de-identified at source; no record identifies an
-individual.
-
-The report definition, semantic model and source extract are not published in
-this repository.
+The dataset is public and de-identified at source; no record identifies an
+individual. The report definition, semantic model and source extract are not
+published in this repository — the code above is shown as excerpts, in context,
+rather than as files to download.
