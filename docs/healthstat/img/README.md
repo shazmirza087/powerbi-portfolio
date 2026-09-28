@@ -1,40 +1,48 @@
 # Screenshots for this project
 
-Drop the files below into this folder. The page renders a "Screenshot pending"
-placeholder for anything missing, so it never shows a broken image — add them in
-any order.
+Sixteen images — every report page in both themes, plus both distribution views. The case study pairs them, so
+each figure has a Dark / Light toggle.
 
-| Filename | What to capture |
-|---|---|
-| `home-dark.png` | Home page, dark. Also used as the card image on the landing page, so shoot this one first. |
-| `los-ranked-dark.png` | Length of stay, dark, **Ranked** view active in the Facility outliers panel. |
-| `los-spread-dark.png` | Length of stay, dark, **Spread** view active. |
-| `cost-spread-dark.png` | Cost & charges, dark, **Spread** view active. |
-| `hospital-profile-dark.png` | Hospital profile, dark, with one facility selected in the slicer. |
-| `access-dark.png` | Access to care, dark. |
-| `value-dark.png` | Value & efficiency, dark. |
-| `los-light.png` | Length of stay, **light** theme — same view as `los-ranked-dark.png` so the pair reads as a true comparison. |
+| File | Page | Theme |
+|---|---|---|
+| `home-dark.webp` / `home-light.webp` | Home | dark / light |
+| `los-dark.webp` / `los-light.webp` | Length of stay — Ranked view | dark / light |
+| `los-spread-dark.webp` / `los-spread-light.webp` | Length of stay — Spread view | dark / light |
+| `cost-dark.webp` / `cost-light.webp` | Cost and charges — Ranked view | dark / light |
+| `cost-spread-dark.webp` / `cost-spread-light.webp` | Cost and charges — Spread view | dark / light |
+| `value-dark.webp` / `value-light.webp` | Value and efficiency | dark / light |
+| `access-dark.webp` / `access-light.webp` | Access to care | dark / light |
+| `profile-dark.webp` / `profile-light.webp` | Hospital profile | dark / light |
 
-## Capturing them
+`home-dark.webp` doubles as the card image on the landing page.
 
-- **Full page, no chrome.** In Power BI Desktop use View → Page view → Fit to
-  page, then capture just the report canvas — no ribbon, no taskbar, no cursor.
-- **Consistent state.** Slicers on *All* unless the shot is specifically about a
-  selection (the hospital profile is the exception). No visual left in a
-  hover or selected state.
-- **Same size every time.** The canvas is 1280 × 720. Capture at 2× if you can
-  (2560 × 1440) — it stays crisp on high-density screens and scales down
-  cleanly.
-- **PNG, not JPG.** These are flat-colour UI screenshots; JPG will fuzz the
-  text and banding in the dark backgrounds.
+## Format
 
-## Keep them small
+WebP, quality 92, at the native capture resolution (about 1965 × 1105). That is
+roughly a third the size of the equivalent PNG with no visible difference —
+worth it, because the page loads sixteen of them. The light images are lazy so
+only the visible half loads up front.
 
-A full-page 2× PNG can land around 1–2 MB. Run them through an optimiser
-(TinyPNG, `oxipng -o4`, `pngquant`) before committing — under ~400 KB each keeps
-the page quick without visible loss.
+To convert a new PNG:
 
-## Adding more
+```python
+from PIL import Image
+Image.open("shot.png").convert("RGB").save("shot.webp", "WEBP", quality=92, method=6)
+```
 
-Add a `<figure>` block to `../index.html` following the pattern already there;
-the `onerror` attribute is what produces the placeholder, so copy it across.
+## Capturing
+
+- **Fit to page.** View → Page view → Fit to page, then capture the report
+  canvas only — no ribbon, no page tabs.
+- **Nothing hovered.** Move the mouse off the canvas before the snip. A hovered
+  visual shows its `...` menu and can leave a tooltip in the shot.
+- **Consistent state.** Slicers on *All*, except the hospital profile, which
+  needs one facility selected.
+- **Same view per pair.** The dark and light shots of a page must show the same
+  bookmark view, or the toggle looks like two different reports.
+
+## Adding a figure
+
+Copy a `<figure class="pair">` block in `../index.html`. The `data-theme`
+attribute sets which image shows first; the toggle script is at the bottom of
+that file and needs no changes.
