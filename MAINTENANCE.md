@@ -1,38 +1,51 @@
 # Maintenance notes
 
-Notes for working on this repository. Not part of the published site.
+Notes for working on this repository. Not part of the portfolio itself.
 
 ## Structure
 
+The portfolio is the root `README.md`. GitHub renders it on the repository
+front page, so there is no site to build and nothing to deploy.
+
 ```
-docs/                     GitHub Pages root
-├── index.html            Landing page — one card per project
-├── assets/style.css      Shared styling for every page
-└── <project>/
-    ├── index.html        Case study
-    └── img/              Screenshots
+README.md                          The portfolio — one section per project
+screenshots/
+└── <project>/                     That project's images, plus a README.md
+    │                              listing the filenames the portfolio expects
+    └── *.webp
 ```
 
 ## Adding a project
 
-1. Copy an existing project folder under `docs/` and rename it.
-2. Drop screenshots into its `img/` folder — each project's
-   `img/README.md` lists the filenames its page expects.
-3. Rewrite the case study text in its `index.html`.
-4. Add a card to the grid in `docs/index.html` (copy the block that is
-   already there and repoint the link and image).
+1. Make `screenshots/<project>/` and put its images there, as `.webp`.
+2. Copy that folder's `README.md` from an existing project and update the
+   filename table.
+3. Add a section to the root `README.md`: a heading, the figures as `<picture>`
+   blocks, and the prose between them.
 
-The shared stylesheet means a new project inherits the look with no extra CSS.
+Each figure is a `<picture>` with a light and a dark source, so it follows the
+reader's own GitHub theme:
 
-Missing screenshots render as a "Screenshot pending" placeholder rather than a
-broken image, so a project can go up before its images are ready.
+```html
+<picture>
+  <source media="(prefers-color-scheme: light)" srcset="screenshots/PROJECT/home-light.webp">
+  <source media="(prefers-color-scheme: dark)"  srcset="screenshots/PROJECT/home-dark.webp">
+  <img alt="..." src="screenshots/PROJECT/home-dark.webp">
+</picture>
+```
 
-## Publishing
+Paths are relative to the repository root and must stay that way.
 
-Settings → Pages → Source: *Deploy from a branch* → `main` / `/docs`.
+## Formatting the README
 
-Pages on a free account requires a public repository. With a private repository
-the site will not build until the repo is made public, or the account upgraded.
+- **Dollar amounts in prose are escaped** as `\$`. The technical sections use
+  `$...$` math, and GitHub will otherwise try to pair a stray `$20.9K` with
+  another dollar sign further down the paragraph and render the text between
+  them as a formula.
+- **Math must not contain a pipe** inside a table cell — a `|` ends the cell.
+  Use `\lvert` and `\rvert`.
+- Code excerpts are excerpts. They are there to be read in place, not copied
+  out and run.
 
 ## What must never be committed
 
@@ -47,3 +60,5 @@ git check-ignore -v path/to/file
 ```
 
 No output means the file is **not** ignored and would be committed.
+
+Source PNGs are not committed either — convert to `.webp` and delete the PNG.

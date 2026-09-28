@@ -33,9 +33,9 @@ simply admit sicker people.
 ## Landing page
 
 <picture>
-  <source media="(prefers-color-scheme: light)" srcset="docs/healthstat/img/home-light.webp">
-  <source media="(prefers-color-scheme: dark)"  srcset="docs/healthstat/img/home-dark.webp">
-  <img alt="HealthStat home page" src="docs/healthstat/img/home-dark.webp">
+  <source media="(prefers-color-scheme: light)" srcset="screenshots/healthstat/home-light.webp">
+  <source media="(prefers-color-scheme: dark)"  srcset="screenshots/healthstat/home-dark.webp">
+  <img alt="HealthStat home page" src="screenshots/healthstat/home-dark.webp">
 </picture>
 
 The cohort in five numbers, then a route into each area of the report. Each card
@@ -50,9 +50,9 @@ it is not automatically doing anything wrong. 113 of 151 facilities run above
 the stay their case mix predicts.
 
 <picture>
-  <source media="(prefers-color-scheme: light)" srcset="docs/healthstat/img/los-light.webp">
-  <source media="(prefers-color-scheme: dark)"  srcset="docs/healthstat/img/los-dark.webp">
-  <img alt="Length of stay page, ranked facilities" src="docs/healthstat/img/los-dark.webp">
+  <source media="(prefers-color-scheme: light)" srcset="screenshots/healthstat/los-light.webp">
+  <source media="(prefers-color-scheme: dark)"  srcset="screenshots/healthstat/los-dark.webp">
+  <img alt="Length of stay page, ranked facilities" src="screenshots/healthstat/los-dark.webp">
 </picture>
 
 Three highest and three lowest of 151 facilities — 9.10 days down to 1.37 —
@@ -61,9 +61,9 @@ reads differently from one that is not. The panel holds three views behind the
 chips: this ranking, the full matrix, and the distribution below.
 
 <picture>
-  <source media="(prefers-color-scheme: light)" srcset="docs/healthstat/img/los-spread-light.webp">
-  <source media="(prefers-color-scheme: dark)"  srcset="docs/healthstat/img/los-spread-dark.webp">
-  <img alt="Length of stay, distribution view" src="docs/healthstat/img/los-spread-dark.webp">
+  <source media="(prefers-color-scheme: light)" srcset="screenshots/healthstat/los-spread-light.webp">
+  <source media="(prefers-color-scheme: dark)"  srcset="screenshots/healthstat/los-spread-dark.webp">
+  <img alt="Length of stay, distribution view" src="screenshots/healthstat/los-spread-dark.webp">
 </picture>
 
 The third view, at patient grain rather than facility grain — a custom Vega
@@ -80,18 +80,18 @@ hospital bills tracks what it spends only loosely: the statewide markup is
 billing barely above cost, others several times it.
 
 <picture>
-  <source media="(prefers-color-scheme: light)" srcset="docs/healthstat/img/cost-light.webp">
-  <source media="(prefers-color-scheme: dark)"  srcset="docs/healthstat/img/cost-dark.webp">
-  <img alt="Cost and charges page" src="docs/healthstat/img/cost-dark.webp">
+  <source media="(prefers-color-scheme: light)" srcset="screenshots/healthstat/cost-light.webp">
+  <source media="(prefers-color-scheme: dark)"  srcset="screenshots/healthstat/cost-dark.webp">
+  <img alt="Cost and charges page" src="screenshots/healthstat/cost-dark.webp">
 </picture>
 
 The same three-view panel applied to cost, with charge-to-cost ratio alongside.
 Half of all charges land in New York City.
 
 <picture>
-  <source media="(prefers-color-scheme: light)" srcset="docs/healthstat/img/cost-spread-light.webp">
-  <source media="(prefers-color-scheme: dark)"  srcset="docs/healthstat/img/cost-spread-dark.webp">
-  <img alt="Cost and charges, distribution view" src="docs/healthstat/img/cost-spread-dark.webp">
+  <source media="(prefers-color-scheme: light)" srcset="screenshots/healthstat/cost-spread-light.webp">
+  <source media="(prefers-color-scheme: dark)"  srcset="screenshots/healthstat/cost-spread-dark.webp">
+  <img alt="Cost and charges, distribution view" src="screenshots/healthstat/cost-spread-dark.webp">
 </picture>
 
 The same idea applied to cost, in \$2.5K bands with everything above \$50K capped
@@ -109,9 +109,9 @@ it \$2.0K cheaper per discharge — and the gap survives severity adjustment, at
 0.92× expected stay against 1.20×.
 
 <picture>
-  <source media="(prefers-color-scheme: light)" srcset="docs/healthstat/img/value-light.webp">
-  <source media="(prefers-color-scheme: dark)"  srcset="docs/healthstat/img/value-dark.webp">
-  <img alt="Value and efficiency page" src="docs/healthstat/img/value-dark.webp">
+  <source media="(prefers-color-scheme: light)" srcset="screenshots/healthstat/value-light.webp">
+  <source media="(prefers-color-scheme: dark)"  srcset="screenshots/healthstat/value-dark.webp">
+  <img alt="Value and efficiency page" src="screenshots/healthstat/value-dark.webp">
 </picture>
 
 Every facility plotted as caseload against outcome, with the measure on the
@@ -126,9 +126,9 @@ no high-volume programme at all, and the spread runs from 5% of Southern Tier
 residents to 45% in New York City.
 
 <picture>
-  <source media="(prefers-color-scheme: light)" srcset="docs/healthstat/img/access-light.webp">
-  <source media="(prefers-color-scheme: dark)"  srcset="docs/healthstat/img/access-dark.webp">
-  <img alt="Access to care page" src="docs/healthstat/img/access-dark.webp">
+  <source media="(prefers-color-scheme: light)" srcset="screenshots/healthstat/access-light.webp">
+  <source media="(prefers-color-scheme: dark)"  srcset="screenshots/healthstat/access-dark.webp">
+  <img alt="Access to care page" src="screenshots/healthstat/access-dark.webp">
 </picture>
 
 A custom Vega choropleth of home region against hospital location, shaded by the
@@ -139,9 +139,9 @@ elsewhere.
 ## Hospital profile
 
 <picture>
-  <source media="(prefers-color-scheme: light)" srcset="docs/healthstat/img/profile-light.webp">
-  <source media="(prefers-color-scheme: dark)"  srcset="docs/healthstat/img/profile-dark.webp">
-  <img alt="Hospital profile page" src="docs/healthstat/img/profile-dark.webp">
+  <source media="(prefers-color-scheme: light)" srcset="screenshots/healthstat/profile-light.webp">
+  <source media="(prefers-color-scheme: dark)"  srcset="screenshots/healthstat/profile-dark.webp">
+  <img alt="Hospital profile page" src="screenshots/healthstat/profile-dark.webp">
 </picture>
 
 One facility against the state — volume and rank, stay and cost against

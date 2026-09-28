@@ -1,7 +1,8 @@
-# Screenshots for this project
+# Screenshots — HealthStat
 
-Sixteen images — every report page in both themes, plus both distribution views. The case study pairs them, so
-each figure has a Dark / Light toggle.
+Sixteen images: every report page in both themes, plus both distribution views.
+The case study in the repository root `README.md` pairs them with `<picture>`,
+so each figure follows whichever theme the reader is viewing GitHub in.
 
 | File | Page | Theme |
 |---|---|---|
@@ -14,21 +15,20 @@ each figure has a Dark / Light toggle.
 | `access-dark.webp` / `access-light.webp` | Access to care | dark / light |
 | `profile-dark.webp` / `profile-light.webp` | Hospital profile | dark / light |
 
-`home-dark.webp` doubles as the card image on the landing page.
-
 ## Format
 
 WebP, quality 92, at the native capture resolution (about 1965 × 1105). That is
 roughly a third the size of the equivalent PNG with no visible difference —
-worth it, because the page loads sixteen of them. The light images are lazy so
-only the visible half loads up front.
+worth it, because the README loads sixteen of them.
 
-To convert a new PNG:
+To convert a new capture:
 
 ```python
 from PIL import Image
 Image.open("shot.png").convert("RGB").save("shot.webp", "WEBP", quality=92, method=6)
 ```
+
+Convert, then delete the PNG. Only the `.webp` belongs in the repository.
 
 ## Capturing
 
@@ -41,8 +41,9 @@ Image.open("shot.png").convert("RGB").save("shot.webp", "WEBP", quality=92, meth
 - **Same view per pair.** The dark and light shots of a page must show the same
   bookmark view, or the toggle looks like two different reports.
 
-## Adding a figure
+## Replacing or adding a figure
 
-Copy a `<figure class="pair">` block in `../index.html`. The `data-theme`
-attribute sets which image shows first; the toggle script is at the bottom of
-that file and needs no changes.
+Overwrite the file in place and the README picks it up — the filenames above are
+the contract. A new figure needs a `<picture>` block added to the root
+`README.md`; copy one that is already there and repoint both `srcset`s and the
+fallback `src`.
