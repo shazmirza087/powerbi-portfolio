@@ -8,7 +8,7 @@ The portfolio is the root `README.md`. GitHub renders it on the repository
 front page, so there is no site to build and nothing to deploy.
 
 ```
-README.md                          The portfolio — one section per project
+README.md                          The portfolio, one section per project
 screenshots/
 └── <project>/                     That project's images, plus a README.md
     │                              listing the filenames the portfolio expects
@@ -42,14 +42,14 @@ Paths are relative to the repository root and must stay that way.
   `$...$` math, and GitHub will otherwise try to pair a stray `$20.9K` with
   another dollar sign further down the paragraph and render the text between
   them as a formula.
-- **Math must not contain a pipe** inside a table cell — a `|` ends the cell.
+- **Math must not contain a pipe** inside a table cell, because a `|` ends the cell.
   Use `\lvert` and `\rvert`.
 - Code excerpts are excerpts. They are there to be read in place, not copied
   out and run.
 
 ## What must never be committed
 
-`.gitignore` blocks Power BI and data file types outright — `.pbix`, `.pbip`,
+`.gitignore` blocks Power BI and data file types outright: `.pbix`, `.pbip`,
 `.tmdl`, `.bim`, `.dax`, any `*.Report/` or `*.SemanticModel/` folder at any
 depth, plus CSV/XLSX and anything env- or secret-shaped.
 
@@ -61,4 +61,4 @@ git check-ignore -v path/to/file
 
 No output means the file is **not** ignored and would be committed.
 
-Source PNGs are not committed either — convert to `.webp` and delete the PNG.
+Source PNGs are not committed either. Convert to `.webp` and delete the PNG.
