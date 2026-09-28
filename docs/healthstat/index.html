@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HealthStat — Power BI Portfolio</title>
+<meta name="description" content="A seven-page Power BI report over 26,286 elective hip replacement discharges in New York State: severity-adjusted benchmarking, measure-driven text and custom Vega visuals.">
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap">
+    <div class="crumb"><a href="../">Portfolio</a> &nbsp;/&nbsp; HealthStat</div>
+    <h1>HealthStat — elective hip replacement</h1>
+    <p>Seven report pages over every elective hip replacement discharged from a
+       New York State hospital in a single year, built to answer one question:
+       once you account for how sick the patients are, which hospitals are
+       actually different?</p>
+    <ul class="chips">
+      <li>Power BI</li>
+      <li>DAX</li>
+      <li>TMDL</li>
+      <li>Deneb / Vega</li>
+      <li>SVG &amp; HTML visuals</li>
+      <li>Bookmarks</li>
+    </ul>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+
+    <section>
+      <div class="stats">
+        <div><b>26,286</b><span>discharges</span></div>
+        <div><b>151</b><span>facilities</span></div>
+        <div><b>627</b><span>surgeons</span></div>
+        <div><b>$1.6B</b><span>total charges</span></div>
+        <div><b>7 &times; 2</b><span>pages, dark and light</span></div>
+      </div>
+
+      <p class="lead">Raw averages make hospitals look different when mostly
+        they are treating different patients. The report's spine is a
+        severity-adjusted comparison: every facility is scored against the
+        stay and cost its own case mix predicts, so the pages separate the
+        hospitals that are genuinely outliers from the ones that simply admit
+        sicker people.</p>
+    </section>
+
+    <section>
+      <h2>Landing page</h2>
+      <figure>
+        <img src="img/home-dark.png" alt="HealthStat home page"
+             onerror="this.closest('figure').classList.add('missing')">
+        <figcaption>The opening view: headline figures for the cohort and
+          routes into each area of the report.</figcaption>
+      </figure>
+    </section>
+
+    <section>
+      <h2>Length of stay</h2>
+      <p>Three views of the same panel, switched by bookmark: the best and
+        worst facilities ranked, the full table, and the distribution of
+        individual stays.</p>
+
+      <figure>
+        <img src="img/los-ranked-dark.png" alt="Length of stay, ranked facilities"
+             onerror="this.closest('figure').classList.add('missing')">
+        <figcaption>Ranked — three highest and three lowest facilities against
+          the state average, with the severity-adjusted ratio alongside so a
+          long stay caused by case mix is distinguishable from one that is
+          not.</figcaption>
+      </figure>
+
+      <figure>
+        <img src="img/los-spread-dark.png" alt="Distribution of patient stays"
+             onerror="this.closest('figure').classList.add('missing')">
+        <figcaption>Spread — a custom Vega histogram at patient grain rather
+          than facility grain. Half of all stays end by night two, but the
+          mean reads 2.65, because a thin tail of long stays pulls it right.
+          The chart marks both so the gap is visible rather than
+          asserted.</figcaption>
+      </figure>
+    </section>
+
+    <section>
+      <h2>Cost and charges</h2>
+      <figure>
+        <img src="img/cost-spread-dark.png" alt="Distribution of cost per discharge"
+             onerror="this.closest('figure').classList.add('missing')">
+        <figcaption>The same panel design applied to cost: what one discharge
+          costs, in bands, with the capped top band holding everything above
+          it. Each page's third view is about that page's own measure rather
+          than a shared chart.</figcaption>
+      </figure>
+    </section>
+
+    <section>
+      <h2>Hospital profile</h2>
+      <figure>
+        <img src="img/hospital-profile-dark.png" alt="Single hospital profile"
+             onerror="this.closest('figure').classList.add('missing')">
+        <figcaption>One facility against the state: volume and rank, stay and
+          cost against expected, case mix, and where its patients go after
+          discharge.</figcaption>
+      </figure>
+    </section>
+
+    <section>
+      <h2>Access and value</h2>
+      <figure>
+        <img src="img/access-dark.png" alt="Access to care page"
+             onerror="this.closest('figure').classList.add('missing')">
+        <figcaption>Where patients travel from, and how much of each region's
+          volume its local hospitals keep.</figcaption>
+      </figure>
+      <figure>
+        <img src="img/value-dark.png" alt="Value and efficiency page"
+             onerror="this.closest('figure').classList.add('missing')">
+        <figcaption>Cost against outcome, with programme size as context —
+          testing whether the busier programmes are the cheaper ones.</figcaption>
+      </figure>
+    </section>
+
+    <section>
+      <h2>Dark and light</h2>
+      <figure>
+        <img src="img/los-light.png" alt="Length of stay in the light theme"
+             onerror="this.closest('figure').classList.add('missing')">
+        <figcaption>Every page exists twice. The two sets are true twins —
+          same layout, same measures, same bookmarks — with slicer selections
+          synced across the pair so switching theme never loses the
+          reader's place.</figcaption>
+      </figure>
+    </section>
+
+    <section>
+      <h2>How it is built</h2>
+
+      <h3>Severity adjustment</h3>
+      <p>Expected stay and expected cost are calculated by indirect
+        standardisation: each facility is scored against the statewide figure
+        for its <em>own</em> severity mix, summed back up over its case
+        distribution. The observed-to-expected ratio is then the measure the
+        pages actually rank on.</p>
+      <blockquote>Written with <code>SUMX</code> over the severity values and
+        <code>ALLEXCEPT</code> to hold the severity level while releasing the
+        facility — cheap evaluated once for the state, ruinous if evaluated per
+        facility across 151 rows. Where that mattered, the aggregation was
+        restructured rather than the visual simplified.</blockquote>
+
+      <h3>Nothing on screen is typed twice</h3>
+      <ul class="notes">
+        <li><b>All text is measure-driven.</b> Titles, subtitles, insight
+          sentences and tile footnotes are DAX, so every number and every
+          hospital name in prose re-resolves under a filter instead of going
+          stale.</li>
+        <li><b>Display units follow magnitude.</b> Values switch between plain,
+          K, M and B by size rather than carrying a fixed suffix, so a figure
+          reads correctly whether the page is showing one hospital or the whole
+          state.</li>
+        <li><b>Sentences are guarded.</b> A filtered selection that collapses a
+          comparison rewrites the sentence rather than printing a degenerate
+          one.</li>
+      </ul>
+
+      <h3>Custom visuals where the native ones could not reach</h3>
+      <ul class="notes">
+        <li><b>Deneb (Vega, not Vega-Lite)</b> for the distribution views, the
+          range tracks and the region map — anywhere the shape of the answer
+          mattered more than the convenience of a built-in chart.</li>
+        <li><b>Banding lives in the model, not the spec.</b> Stay and cost bands
+          are calculated columns, because a visual can only cross-filter on a
+          real column. Folding the tail inside the chart would have made it a
+          picture; folding it in the model keeps every bar a real value.</li>
+        <li><b>HTML and SVG measures</b> for the KPI tiles and range sliders,
+          which gives precise control over layout and lets the same markup
+          re-theme from the colour table.</li>
+      </ul>
+
+      <h3>Judgement calls worth naming</h3>
+      <ul class="notes">
+        <li><b>A noise floor, with a reason.</b> Breakdown bands under 50
+          discharges are blanked. The threshold was set against the data rather
+          than picked: it sits below the smallest clinically real groups while
+          excluding bands of fifteen or twenty patients that would otherwise
+          top every ranking on delta alone.</li>
+        <li><b>No trend analysis, deliberately.</b> The extract carries a single
+          discharge year. Rather than manufacture a time axis, the report states
+          that every figure is a snapshot — a constraint named is better than a
+          trend implied.</li>
+        <li><b>Interactions are chosen, not defaulted.</b> The distribution
+          charts respond to slicers and to other visuals but do not filter
+          outward: on a page where every measure is a function of stay length,
+          emitting a filter on stay length would pin the variable and flatten
+          the page.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>Data</h2>
+      <p>New York State SPARCS de-identified inpatient discharge data, filtered
+        to elective total hip replacements, for a single discharge year. The
+        dataset is public, patient-level and already de-identified at source;
+        no record identifies an individual.</p>
+      <p>The report definition, semantic model and source extract are not
+        published in this repository.</p>
+    </section>
+
+  </div>
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <p><a href="../">&larr; Back to the portfolio</a></p>
+  </div>
+</footer>
+
+</body>
+</html>
