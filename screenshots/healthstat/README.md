@@ -17,9 +17,9 @@ figure follows whichever theme the reader is viewing GitHub in.
 
 ## Format
 
-WebP, quality 92, at the native capture resolution (about 1965 × 1105). That is
+WebP, quality 92, at the native capture resolution, about 1965 x 1105. That is
 roughly a third the size of the equivalent PNG with no visible difference, which
-is worth having because the README loads sixteen of them.
+is worth having because the README loads sixteen of them on one page.
 
 To convert a new capture:
 
@@ -44,6 +44,6 @@ Convert, then delete the PNG. Only the `.webp` belongs in the repository.
 ## Replacing or adding a figure
 
 Overwrite the file in place and the README picks it up. The filenames above are
-the contract. A new figure needs a `<picture>` block added to the root
+the contract, so a new capture just needs the right name. A new figure needs a `<picture>` block added to the root
 `README.md`; copy one that is already there and repoint both `srcset`s and the
 fallback `src`.
