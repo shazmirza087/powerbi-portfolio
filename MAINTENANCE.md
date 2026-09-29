@@ -38,12 +38,24 @@ Paths are relative to the repository root and must stay that way.
 
 ## Formatting the README
 
-- **No LaTeX maths.** It was tried and removed for two reasons. GitHub's
-  renderer mangles spacing commands, so `\;` came out on the page as a literal
-  semicolon and the formula read `expected; = ;`. And symbols shut out the half
-  of the audience who are not statisticians. Explain arithmetic in words, or
-  with a worked example in a plain code block. A reader should be able to follow
-  a calculation without knowing what a sigma is.
+- **Formulas use English words, not symbols.** They are still rendered as real
+  maths with `$$...$$` or inline `$...$`, but every term inside is plain words
+  wrapped in `\text{}`. No Greek letters, no subscripts, no summation signs. The
+  test is whether a reader can say the fraction out loud:
+
+  ```
+  $$
+  \text{Score} = \frac{\text{what actually happened}}{\text{what was expected}}
+  $$
+  ```
+
+  Anything with genuinely moving parts gets a worked example in a plain code
+  block underneath, with real numbers.
+- **Never use spacing commands** such as `\;`, `\,`, `\quad` or `\qquad`.
+  GitHub renders `\;` as a literal semicolon, which once put `expected; = ;` on
+  the page. Put each formula in its own `$$` block instead of spacing two of
+  them apart on one line.
+- **No `|` inside maths in a table cell.** It ends the cell.
 - **Dollar amounts in prose are escaped** as `\$`. GitHub will otherwise try to
   pair a stray `$20.9K` with another dollar sign further down the paragraph and
   render everything between them as a formula.

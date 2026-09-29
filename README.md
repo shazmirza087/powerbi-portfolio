@@ -261,6 +261,18 @@ Expected stay is indirect standardisation. In plain terms: work out what each
 hospital's own patients should have needed, then compare that with what actually
 happened.
 
+$$
+\text{Expected stay} = \frac{\text{expected patient days}}{\text{total patients}}
+$$
+
+$$
+\text{Score} = \frac{\text{what actually happened}}{\text{what was expected}}
+$$
+
+"Expected patient days" means: for each severity grade, multiply how many
+patients the hospital had by the state average stay for that grade, then add
+those up.
+
 Every patient arrives graded minor, moderate, major or extreme. Across the whole
 state those grades average roughly:
 
@@ -345,13 +357,18 @@ shipped the first time because two of them did not.
 
 | On screen | How it is worked out |
 |---|---|
-| Average stay | all the nights added up, divided by the number of operations |
-| Cost per operation | all the costs added up, divided by the number of operations |
-| Bill to cost | all the charges added up, divided by all the costs added up. Add first, then divide. Averaging each hospital's own ratio would give a different and wrong answer, because it would treat a hospital doing four operations as equal to one doing four thousand |
-| Operations per surgeon | operations, divided by the number of different surgeons who performed them |
-| Expected stay or cost | the worked example above |
-| Score | what actually happened, divided by what was expected |
-| Price bracket | the cost rounded down to the nearest \$2,500, with everything above \$50,000 put in one top bracket |
+| Average stay | $\frac{\text{all the nights added up}}{\text{number of operations}}$ |
+| Cost per operation | $\frac{\text{all the costs added up}}{\text{number of operations}}$ |
+| Bill to cost | $\frac{\text{all the charges added up}}{\text{all the costs added up}}$ |
+| Operations per surgeon | $\frac{\text{number of operations}}{\text{number of different surgeons}}$ |
+| Expected stay or cost | $\frac{\text{expected patient days}}{\text{total patients}}$, as worked through above |
+| Score | $\frac{\text{what actually happened}}{\text{what was expected}}$ |
+| Price bracket | the cost rounded down to the nearest \$2,500, with everything above \$50,000 in one top bracket |
+
+Bill to cost is worth a note. Everything is added up first and divided once.
+Averaging each hospital's own ratio instead would give a different and wrong
+answer, because it would treat a hospital doing four operations as equal to one
+doing four thousand.
 
 One is not ordinary. The scatter chart needs to flag hospitals sitting well off
 the volume-outcome trend, and it does it in four steps:
@@ -366,12 +383,22 @@ the volume-outcome trend, and it does it in four steps:
 4. **Score each hospital** by how many typical distances it sits away from the
    middle. Past about three and a half, it gets flagged.
 
+Written out, step 4 is:
+
+$$
+\text{Outlier score} = \frac{\text{this hospital's distance from the line} - \text{the middle distance}}{\text{the typical distance}}
+$$
+
 Step 3 is the one that matters. The textbook method uses the *average* distance
 and the standard deviation, and that quietly fails here: the handful of unusual
 hospitals I am trying to find are themselves what makes the average distance
 large, so they end up hiding inside their own effect on the ruler. Using the
 middle value instead makes the ruler immune to them. Two extreme hospitals
 cannot move a median the way they move an average.
+
+There is also a constant of 0.6745 in the code, which rescales the result so
+that "one typical distance" means the same thing here as one standard deviation
+would in the textbook version. It changes the units, not the ranking.
 
 ---
 
