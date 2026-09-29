@@ -38,12 +38,15 @@ Paths are relative to the repository root and must stay that way.
 
 ## Formatting the README
 
-- **Dollar amounts in prose are escaped** as `\$`. The technical sections use
-  `$...$` math, and GitHub will otherwise try to pair a stray `$20.9K` with
-  another dollar sign further down the paragraph and render the text between
-  them as a formula.
-- **Math must not contain a pipe** inside a table cell, because a `|` ends the cell.
-  Use `\lvert` and `\rvert`.
+- **No LaTeX maths.** It was tried and removed for two reasons. GitHub's
+  renderer mangles spacing commands, so `\;` came out on the page as a literal
+  semicolon and the formula read `expected; = ;`. And symbols shut out the half
+  of the audience who are not statisticians. Explain arithmetic in words, or
+  with a worked example in a plain code block. A reader should be able to follow
+  a calculation without knowing what a sigma is.
+- **Dollar amounts in prose are escaped** as `\$`. GitHub will otherwise try to
+  pair a stray `$20.9K` with another dollar sign further down the paragraph and
+  render everything between them as a formula.
 - Code excerpts are excerpts. They are there to be read in place, not copied
   out and run.
 

@@ -257,14 +257,36 @@ is allowed to see.
 
 ### The one that matters
 
-Expected stay is indirect standardisation. Score every hospital against the
-statewide figure for its *own* severity mix:
+Expected stay is indirect standardisation. In plain terms: work out what each
+hospital's own patients should have needed, then compare that with what actually
+happened.
 
-$$
-\text{expected} \;=\; \frac{\sum_{s} n_{s}\,\bar{y}_{s}}{\sum_{s} n_{s}}
-\qquad\qquad
-\text{score} \;=\; \frac{\text{actual}}{\text{expected}}
-$$
+Every patient arrives graded minor, moderate, major or extreme. Across the whole
+state those grades average roughly:
+
+| Grade | Average stay |
+|---|---|
+| Minor | 2.4 days |
+| Moderate | 2.7 days |
+| Major | 4.6 days |
+| Extreme | 12.4 days |
+
+Now take a hospital with 100 patients: 50 minor, 40 moderate, 7 major and 3
+extreme. Multiply each group by the state average for its grade, add them up,
+and divide by the patient count:
+
+```
+(50 x 2.4) + (40 x 2.7) + (7 x 4.6) + (3 x 12.4)  =  297.4 patient-days
+297.4 / 100 patients                              =  2.97 days expected
+```
+
+So this hospital should average about 2.97 days. If it actually averaged 3.57,
+its score is 3.57 divided by 2.97, which is **1.20**: twenty per cent longer
+than its own patients predict.
+
+A score of 1.00 means the hospital landed exactly where its patient mix said it
+would. Below 1.00 is better than predicted, above is worse. That is the number
+the whole report ranks on.
 
 ```dax
 Expected LOS Days =
@@ -321,28 +343,35 @@ shipped the first time because two of them did not.
 
 ### The rest of the arithmetic
 
-| On screen | Definition |
+| On screen | How it is worked out |
 |---|---|
-| Average stay | $\dfrac{1}{n}\sum \mathrm{nights}$ |
-| Cost per discharge | $\dfrac{\sum \mathrm{cost}}{n}$ |
-| Bill to cost | $\dfrac{\sum \mathrm{charges}}{\sum \mathrm{costs}}$, a ratio of sums, not a mean of ratios |
-| Discharges per surgeon | $\dfrac{n}{\lvert\{\text{operating provider}\}\rvert}$ |
-| Expected stay or cost | $\sum_s n_s \bar y_s \,/\, \sum_s n_s$ |
-| Score | observed $/$ expected |
-| Cost band | $\min\!\left(2500\left\lfloor \tfrac{\mathrm{cost}}{2500}\right\rfloor,\;50000\right)$ |
+| Average stay | all the nights added up, divided by the number of operations |
+| Cost per operation | all the costs added up, divided by the number of operations |
+| Bill to cost | all the charges added up, divided by all the costs added up. Add first, then divide. Averaging each hospital's own ratio would give a different and wrong answer, because it would treat a hospital doing four operations as equal to one doing four thousand |
+| Operations per surgeon | operations, divided by the number of different surgeons who performed them |
+| Expected stay or cost | the worked example above |
+| Score | what actually happened, divided by what was expected |
+| Price bracket | the cost rounded down to the nearest \$2,500, with everything above \$50,000 put in one top bracket |
 
-One is not ordinary. The scatter flags hospitals off the volume-outcome trend,
-and the textbook approach of counting standard deviations fails here because the
-outliers inflate the standard deviation and hide inside their own effect on it.
-So the residuals are standardised on median and MAD instead:
+One is not ordinary. The scatter chart needs to flag hospitals sitting well off
+the volume-outcome trend, and it does it in four steps:
 
-$$
-\hat{y}_i = a + b\log_{10} n_i
-\qquad
-r_i = y_i - \hat{y}_i
-\qquad
-z_i = \frac{0.6745\,\bigl(r_i - \mathrm{med}(r)\bigr)}{\mathrm{MAD}(r)}
-$$
+1. **Draw the best-fit line** through all the hospitals. The line is fitted
+   against the *log* of caseload, because caseload runs from four operations a
+   year to over four thousand, and on a straight scale almost every hospital
+   would bunch up at one end.
+2. **Measure each hospital's distance** above or below that line.
+3. **Find the typical distance**, meaning the middle value of all those
+   distances rather than the average of them.
+4. **Score each hospital** by how many typical distances it sits away from the
+   middle. Past about three and a half, it gets flagged.
+
+Step 3 is the one that matters. The textbook method uses the *average* distance
+and the standard deviation, and that quietly fails here: the handful of unusual
+hospitals I am trying to find are themselves what makes the average distance
+large, so they end up hiding inside their own effect on the ruler. Using the
+middle value instead makes the ruler immune to them. Two extreme hospitals
+cannot move a median the way they move an average.
 
 ---
 
