@@ -1,7 +1,7 @@
 # ---------------------------------------------------------------------------
-# Power BI source artefacts — never published.
+# Power BI source artefacts: never published.
 #
-# The site is screenshots and writing. The model, the DAX and the report
+# The portfolio is screenshots and writing. The model, the DAX and the report
 # definition stay on disk. This list is the safety net: it makes a careless
 # `git add .` a no-op rather than a leak.
 # ---------------------------------------------------------------------------

@@ -19,8 +19,9 @@ custom visuals, and the decisions behind each.
 | **14** page definitions | six pages built twice for dark and light, plus a detail page pair |
 | **13** tables | one fact table, three lookups, nine disconnected helpers |
 | **3** relationships | in the entire model |
-| **183** measures | of which **29 return HTML** and **4 return SVG** |
-| **Deneb** | every distribution chart, the choropleth, the driver panels and the card sparklines are hand-written Vega specs |
+| **183** measures | of which **29 return HTML** and **4** return SVG |
+| **60** HTML viewer visuals | 30 per theme, one for each measure that returns markup |
+| **46** Deneb visuals | 23 per theme: both distributions, the choropleth, the driver panels, the card sparklines |
 | **26,286** rows | one year of New York hip replacements, 151 hospitals |
 
 This is a Power BI report about hospital performance, but the interesting part
@@ -34,13 +35,14 @@ visual is its own JSON file. That means the report is diffable, reviewable and
 patchable like any other source tree, which is how most of the fixes described
 below were actually made.
 
-Very little of what you see is a stock Power BI visual:
+Most of what you see is not a stock Power BI visual:
 
 | What you are looking at | What draws it |
 |---|---|
-| Every KPI card, tile and written insight banner | a **DAX measure returning HTML**, rendered by an HTML viewer visual |
-| The hero range strips and deviation bars | a **DAX measure returning inline SVG** |
+| Every KPI hero, tile and written insight banner on the five inner pages | a **DAX measure returning HTML**, rendered by an HTML viewer visual |
+| The deviation bar in every row of the matrix | a **DAX measure returning inline SVG** as a `data:` URI |
 | Both distribution charts, the region choropleth, the driver panels, the card sparklines | **Deneb**, as hand-written Vega and Vega-Lite specs |
+| The landing page cards | native card visuals, each bound to a measure that returns a finished string |
 | Ranked bars, matrix, scatter, slicers, buttons | native Power BI visuals |
 
 **Jump to:** [What it looks like](#what-it-looks-like) ·
@@ -84,11 +86,18 @@ expected side by side.
   <img alt="HealthStat home page" src="screenshots/healthstat/home-dark.webp">
 </picture>
 
-Ten cards, none of them a native Power BI card. The five KPI cards across the
-top and the five navigation cards below are each a single **DAX measure
-returning HTML**. The mini bar charts inside the navigation cards are **Vega-Lite
-specs in Deneb**. The footer timestamp comes from a one-row calculated table, so
-it reports when the data loaded rather than when you looked at it.
+Twelve cards, and not one of them has a word typed into it. This page uses
+**native card visuals**, each bound to a measure that returns a finished string:
+the five figures across the top, the five navigation card footers, the
+subtitle and the source line. That includes the one that switches between 847,
+12.4K and \$20.9K depending on magnitude.
+
+The five mini bar charts inside the navigation cards are **Vega-Lite specs in
+Deneb**. The footer timestamp comes from a one-row calculated table, so it
+reports when the data loaded rather than when you looked at it.
+
+The HTML measures start on the next page. This one makes the point that driving
+text from the model does not require them.
 
 ### Length of stay
 
@@ -98,10 +107,11 @@ it reports when the data loaded rather than when you looked at it.
   <img alt="Length of stay, ranked hospitals" src="screenshots/healthstat/los-dark.webp">
 </picture>
 
-Four KPI cards, each an **HTML measure**, with the range strip under the first
-one drawn as **inline SVG** from another. The green banner across the middle is
-one more HTML measure: it names the hospitals, states the ratio and rewrites its
-own sentence structure when a selection makes the usual one nonsense.
+Five **HTML measures** on this page. Four are the KPI cards along the top,
+including the range track and its thumb, which are part of the same markup
+rather than a separate visual. The fifth is the green banner across the middle:
+it names the hospitals, states the ratio and rewrites its own sentence structure
+when a selection makes the usual one nonsense.
 
 The panel on the left holds three views behind one set of chips: this ranking, a
 full matrix, and the distribution below. They are separate visuals stacked in a
@@ -248,9 +258,10 @@ was not one yet.
 
 ## The measure layer
 
-183 measures, of which 65 are presentation: 29 building HTML, 4 building SVG, 17
-returning formatted sentences, 15 resolving colour tokens. That is the cost of
-driving every word on screen from the model. The other 120 are the numbers.
+183 measures, of which 77 are presentation: 29 building HTML, 4 building SVG,
+29 returning finished sentences and labels, 15 resolving colour tokens. That is
+the cost of driving every word on screen from the model. The other 106 do the
+arithmetic.
 
 Most of the arithmetic is ordinary. The work is in controlling what each measure
 is allowed to see.
@@ -378,15 +389,16 @@ the volume-outcome trend, and it does it in four steps:
    year to over four thousand, and on a straight scale almost every hospital
    would bunch up at one end.
 2. **Measure each hospital's distance** above or below that line.
-3. **Find the typical distance**, meaning the middle value of all those
-   distances rather than the average of them.
-4. **Score each hospital** by how many typical distances it sits away from the
-   middle. Past about three and a half, it gets flagged.
+3. **Find the middle distance**, meaning the median of all those distances
+   rather than their average. Then find the typical wobble around it: how far a
+   middling hospital sits from that middle.
+4. **Score each hospital** by how many of those typical wobbles it sits away
+   from the middle distance. Past about three and a half, it gets flagged.
 
 Written out, step 4 is:
 
 $$
-\text{Outlier score} = \frac{\text{this hospital's distance from the line} - \text{the middle distance}}{\text{the typical distance}}
+\text{Outlier score} = \frac{\text{this hospital's distance from the line} - \text{the middle distance}}{\text{the typical distance from the middle}}
 $$
 
 Step 3 is the one that matters. The textbook method uses the *average* distance
@@ -435,16 +447,21 @@ had an explicit light override. The reference line had been missed.
 The lesson is the architectural one: a theming system only holds if nothing
 opts out of it. One property on one visual was enough to break a page.
 
+---
+
 ## HTML and SVG measures
 
-Every card, tile and written insight in this report is a DAX measure that
-returns markup. There is not a single native card visual, and no string is typed
-onto a canvas anywhere.
+On the five inner pages, every card, tile and written insight is a DAX measure
+that returns markup, rendered through an HTML viewer visual. No string is typed
+onto a canvas anywhere in the report.
 
-Two reasons. Native cards cannot produce this layout: a 56px figure with a unit
-beside it, a conditional pill, a range track with a positioned thumb, and a
-three-part footer, all inside one tile. And a measure can read its colours from
-the theme table, so the same measure serves the dark page and its light twin.
+The reason is layout. A native card can show one measure and style it. It
+cannot produce a 56px figure with a unit beside it, a conditional pill, a range
+track with a positioned thumb and a three-part footer, all inside one tile.
+That is why the landing page, whose cards are each a single line of text, uses
+native cards, and these pages do not. The second reason is theming: a measure
+can read its colours from the theme table, so the same measure serves the dark
+page and its light twin.
 
 Here is a hero card, trimmed but structurally complete:
 
@@ -500,13 +517,14 @@ RETURN
 "</div>"
 ```
 
-Four measures return **inline SVG** instead, as a `data:` URI on an image
-column. That is how the matrix gets a deviation bar in every row, centred on
-1.00, scaled to the 90th percentile of what is actually on screen so one extreme
-value cannot flatten everyone else. Two things bite here and both are recorded
-in the model as comments: a `#` inside a `data:` URI starts a fragment and has
-to be encoded as `%23`, and `FORMAT` with `0.#` returns `12.` for a whole
-number, which is not a valid SVG coordinate and silently pins the bar to zero.
+Four measures return **inline SVG** instead, handed over as a `data:` URI on an
+image column. Two of them draw the deviation bar in every row of the matrix,
+centred on 1.00 and scaled to the 90th percentile of what is actually on
+screen, so one extreme value cannot flatten everyone else. Two things bite here
+and both are recorded in the model as comments: a `#` inside a `data:` URI
+starts a fragment and has to be encoded as `%23`, and `FORMAT` with `0.#`
+returns `12.` for a whole number, which is not a valid SVG coordinate and
+silently pins the bar to zero.
 
 ### Sentences that change shape
 
@@ -539,6 +557,8 @@ IF ( _a >= 999.5,
      SWITCH ( TRUE (), _a >= 999950000, "B", _a >= 999950, "M", "K" ),
      FORMAT ( _v, "#,0", "en-US" ) )
 ```
+
+---
 
 ## Deneb: charts written as Vega specs
 
@@ -641,6 +661,8 @@ wherever it crossed one.
 The pattern in all three: a Vega spec can be structurally perfect and still be
 wrong on screen. These only surface by rendering it and looking.
 
+---
+
 ## Interaction design
 
 **Three views, one footprint.** The outlier panel on the stay and cost pages
@@ -653,11 +675,14 @@ The chips are button states, so the active view is obvious without a legend.
 and the breakdown panel's dimension both come from field parameters. One visual,
 five measures, no bookmark stack to maintain.
 
-**Cross-filtering has a direction.** The two distribution charts respond to
-slicers and to other visuals, but clicking them does not filter outward. On a
-page where every measure is a function of length of stay, emitting a
-length-of-stay filter would pin the one variable the page exists to show and
-flatten every other visual on it. That is a deliberate setting, not a default.
+**Cross-filtering is written, not inherited.** A Deneb chart does not filter
+anything unless the spec says how. The distribution charts carry three
+handlers: a night column emits the night it stands for, the folded tail emits a
+range, and a click on empty canvas clears the selection. The middle one is the
+interesting case, because a column standing for "more than fourteen nights" has
+no single value to emit.
+
+---
 
 ## Performance
 
@@ -678,6 +703,8 @@ rebuilding as a calculated table. Known and bounded beats clever and fragile.
 model and derive everything else in the spec. Fewer projected fields means a
 smaller query and fewer names that can be spelled wrong.
 
+---
+
 ## How I test it
 
 Building something that looks right is the easy half.
@@ -696,6 +723,8 @@ Building something that looks right is the easy half.
 - **Because it is PBIP, the diff is the review.** A visual is a file. Changing a
   label colour or a Vega signal shows up as a few lines, which makes it possible
   to check what actually changed rather than what I meant to change.
+
+---
 
 ## Trade-offs and what I would revisit
 
@@ -735,6 +764,8 @@ It is on the list.
 **No trend analysis, deliberately.** The extract carries one discharge year with
 nothing finer inside it. Rather than manufacture a time axis, the report states
 that every figure is a snapshot.
+
+---
 
 ## The data
 

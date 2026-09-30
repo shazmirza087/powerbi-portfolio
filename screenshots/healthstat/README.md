@@ -44,6 +44,6 @@ Convert, then delete the PNG. Only the `.webp` belongs in the repository.
 ## Replacing or adding a figure
 
 Overwrite the file in place and the README picks it up. The filenames above are
-the contract, so a new capture just needs the right name. A new figure needs a `<picture>` block added to the root
-`README.md`; copy one that is already there and repoint both `srcset`s and the
-fallback `src`.
+the contract, so a new capture just needs the right name. A new figure needs a
+`<picture>` block added to the root `README.md`; copy one that is already there
+and repoint both `srcset`s and the fallback `src`.
