@@ -1,8 +1,9 @@
 # Screenshots: HealthStat
 
 Sixteen images: every report page in both themes, plus both spread views. The
-write-up in the repository root `README.md` pairs them with `<picture>`, so each
-figure follows whichever theme the reader is viewing GitHub in.
+write-up in `projects/healthstat/README.md` pairs them with `<picture>`, so each
+figure follows whichever theme the reader is viewing GitHub in. The root
+`README.md` also uses the two `home` images as the project's cover.
 
 | File | Page | Theme |
 |---|---|---|
@@ -45,5 +46,5 @@ Convert, then delete the PNG. Only the `.webp` belongs in the repository.
 
 Overwrite the file in place and the README picks it up. The filenames above are
 the contract, so a new capture just needs the right name. A new figure needs a
-`<picture>` block added to the root `README.md`; copy one that is already there
-and repoint both `srcset`s and the fallback `src`.
+`<picture>` block added to `projects/healthstat/README.md`; copy one that is already there
+and repoint both `srcset`s and the fallback `src`, keeping the `../../` prefix.
