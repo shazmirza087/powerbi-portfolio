@@ -5,7 +5,8 @@ engineered: the model, the measure layer, the visuals, and the decisions
 behind them.
 
 Only screenshots and writing are published here. The .pbip files, semantic
-models and source data stay offline.
+models and source data stay offline. Where a project has its own data pipeline,
+the pipeline lives in a separate repository, linked from the project.
 
 Pick a project below to open its full write-up with screenshots.
 
@@ -37,6 +38,39 @@ typed into a text box, so changing a slicer rewrites the text too.
   two-row theme table
 
 **[Read the full write-up](projects/healthstat/README.md)**
+
+---
+
+### [Wahat Retail Group Financial Report](projects/wahat-retail-group-financial-report/README.md)
+
+<a href="projects/wahat-retail-group-financial-report/power-bi/README.md">
+  <img alt="Wahat Retail Group report, Group Overview page" src="projects/wahat-retail-group-financial-report/power-bi/screenshots/01-group-overview.webp" width="720">
+</a>
+
+One group P&L in Saudi riyals for a retailer with three businesses: about 110
+grocery shops in Saudi Arabia, an online shop and a Bahrain franchise. Each
+business runs its own accounting system, and Bahrain counts in dinars. The
+board also wants the true profit of every shop.
+
+There was no account mapping, only a rule book, so the project is built end to
+end: a medallion pipeline that maps all 14.4 million ledger lines and proves
+them against the signed-off accounts, then a Power BI report on top.
+
+<a href="https://github.com/shazmirza087/dataeng-jupyter">
+  <img alt="Medallion architecture: raw files to Bronze, Silver, Gold and Power BI" src="projects/wahat-retail-group-financial-report/images/medallion-architecture.png" width="720">
+</a>
+
+- **Built with:** PySpark and Delta Lake (Bronze, Silver, Gold), metadata-driven
+  control tables, SCD Type 2, incremental loads, PBIP and TMDL, a calculation
+  group, field parameters, bookmarks
+- **Scale:** 14.4M ledger lines from 3 ERPs, 2.2M till records, 51 pipeline
+  flows, 218 measures, 8 report pages plus drillthrough and tooltips
+- **Notable:** the pipeline stops itself unless all 25 signed-off totals for
+  2023 and 2024 are rebuilt to the unit; the report can be viewed by day, week,
+  month, quarter or year
+
+**Read the write-ups:** [Power BI](projects/wahat-retail-group-financial-report/power-bi/README.md) ·
+[Data engineering](https://github.com/shazmirza087/dataeng-jupyter)
 
 ---
 
