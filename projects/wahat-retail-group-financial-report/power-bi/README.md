@@ -3009,7 +3009,7 @@ DIVIDE (
 | TT EBITDA vs Budget Change (hidden) |  | EBITDA against budget in %. |
 | TT EBITDA vs Budget Change Status (hidden) | 0 | 1 when the change in [TT EBITDA vs Budget Change] helps profit, 0 when it hurts, -1 when there is none. Colours the change. |
 | TT Net Revenue Trend (hidden) | riyal | Net revenue by month on the Trend Month axis, ignoring the month and year in the tooltip context, so the tooltip draws all 36 months. |
-| TT Hovered Month Revenue (hidden) | riyal | Net revenue of the hovered month only, drawn as the dot on the TT Month trend. |
+| TT Hovered Month Revenue (hidden) | riyal | Net revenue of each month in view, drawn as dots on the TT Month trend: one dot for a hovered month, twelve for a year. |
 | TT Line Title (hidden) |  | Header of the TT Group Line tooltip: code and name of the line, or the bridge step on a waterfall. |
 | TT Prior Year Label (hidden) |  | FY of the year before the one in view. |
 | TT Line Value (hidden) |  | The group line for the year in view as text. |
@@ -3146,10 +3146,9 @@ CALCULATE (
 
 ```dax
 TT Hovered Month Revenue =
-VAR Hovered =
-    IF ( HASONEVALUE ( DimDate[MonthStart] ), MAX ( DimDate[MonthStart] ) )
+VAR TrendMonth = MAX ( 'Trend Month'[MonthStart] )
 RETURN
-    IF ( MAX ( 'Trend Month'[MonthStart] ) = Hovered, [TT Net Revenue Trend] )
+    IF ( TrendMonth IN VALUES ( DimDate[MonthStart] ), [TT Net Revenue Trend] )
 ```
 
 ```dax
@@ -3440,7 +3439,7 @@ To make clicks work everywhere, anything a visual is grouped by sits on a dimens
 
 | Tooltip page | Shows | Used on |
 |---|---|---|
-| TT Month | Net revenue, gross margin, EBITDA and EBITDA vs budget for the hovered period, each with its change, plus a 36-month trend with the hovered month marked | KPI cards on Group Overview and Sales, trend charts on Group P&L, Sales and Cost Structure, both budget charts |
+| TT Month | Net revenue, gross margin, EBITDA and EBITDA vs budget for the hovered period, each with its change, plus a 36-month trend with the months in view marked | KPI cards on Group Overview and Sales, trend charts on Group P&L, Sales and Cost Structure, both budget charts |
 | TT Group Line | The hovered P&L line this year and last year, and its 36-month trend | Both profit bridges, the P&L table, the budget variance table, the operating cost charts |
 | TT Store | The store's contribution and its change, margin and per-sqm figures, a split of where its net sales went, and its 36-month trend | Best and worst stores, the sales per sqm scatter, the store league table |
 | TT Banner | Net revenue, gross profit, opex, EBITDA and net profit for the hovered banner | Every chart on Banners, and EBITDA margin by banner on Group Overview |
