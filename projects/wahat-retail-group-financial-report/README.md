@@ -16,10 +16,10 @@ A medallion pipeline (Bronze, Silver, Gold) in PySpark and Delta Lake. It takes 
 
 <img alt="Medallion architecture diagram" src="data-engineering/images/medallion-architecture.png" width="900">
 
-**[Read the data engineering write-up](data-engineering/README.md)**
+**[Read the data engineering write-up](data-engineering/README.md)** · **[Browse the pipeline code](data-engineering/pipeline/)**
 
 ### [The Power BI side](power-bi/README.md)
 
-The report has eight pages, each answering one question, from "how are we doing?" to "can I trust these numbers?". You can view it by day, week, month, quarter or year. Every click filters the rest of the page, and there's a reset button on every page. Underneath, the measures are mostly plain sums, so it stays fast.
+The report has eight pages, each answering one question, from "how are we doing?" to "can I trust these numbers?". You can view it by day, week, month, quarter or year. Every click filters the rest of the page, and there's a reset button on every page. Underneath, the measures are mostly plain sums, so it stays fast. The write-up covers the whole model: every table, relationship, measure and the calculation group, plus every page and visual.
 
 **[Read the Power BI write-up](power-bi/README.md)**

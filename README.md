@@ -4,8 +4,8 @@ Reports I have built in Power BI, each with its own write-up on how it is
 engineered: the model, the measure layer, the visuals, and the decisions
 behind them.
 
-Only screenshots and writing are published here. The .pbip files, semantic
-models and source data stay offline.
+Only screenshots, writing and pipeline code are published here. The .pbip
+files, semantic models and source data stay offline.
 
 Pick a project below to open its full write-up with screenshots.
 
@@ -69,7 +69,8 @@ them against the signed-off accounts, then a Power BI report on top.
   month, quarter or year
 
 **Read the write-ups:** [Data engineering](projects/wahat-retail-group-financial-report/data-engineering/README.md) ·
-[Power BI](projects/wahat-retail-group-financial-report/power-bi/README.md)
+[Power BI](projects/wahat-retail-group-financial-report/power-bi/README.md) ·
+[Pipeline code](projects/wahat-retail-group-financial-report/data-engineering/pipeline/)
 
 ---
 

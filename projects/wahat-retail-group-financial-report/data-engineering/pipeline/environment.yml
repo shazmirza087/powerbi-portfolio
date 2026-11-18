@@ -1,0 +1,15 @@
+# conda env create -f environment.yml
+name: wahat-pipeline
+channels:
+  - conda-forge
+dependencies:
+  - python=3.11
+  - openjdk=17
+  - pyspark=3.5.3
+  - pandas
+  - pyarrow
+  - jupyterlab
+  - ipykernel
+  - pip
+  - pip:
+      - delta-spark==3.2.1
