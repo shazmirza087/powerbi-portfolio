@@ -4,8 +4,9 @@ Reports I have built in Power BI, each with its own write-up on how it is
 engineered: the model, the measure layer, the visuals, and the decisions
 behind them.
 
-Only screenshots, writing and pipeline code are published here. The .pbip
-files, semantic models and source data stay offline.
+Only screenshots and writing are published here. The .pbip files, semantic
+models and source data stay offline. Where a project has its own data pipeline,
+the pipeline lives in a separate repository, linked from the project.
 
 Pick a project below to open its full write-up with screenshots.
 
@@ -55,8 +56,8 @@ There was no account mapping, only a rule book, so the project is built end to
 end: a medallion pipeline that maps all 14.4 million ledger lines and proves
 them against the signed-off accounts, then a Power BI report on top.
 
-<a href="projects/wahat-retail-group-financial-report/data-engineering/README.md">
-  <img alt="Medallion architecture: raw files to Bronze, Silver, Gold and Power BI" src="projects/wahat-retail-group-financial-report/data-engineering/images/medallion-architecture.png" width="720">
+<a href="https://github.com/shazmirza087/dataeng-jupyter">
+  <img alt="Medallion architecture: raw files to Bronze, Silver, Gold and Power BI" src="projects/wahat-retail-group-financial-report/images/medallion-architecture.png" width="720">
 </a>
 
 - **Built with:** PySpark and Delta Lake (Bronze, Silver, Gold), metadata-driven
@@ -68,9 +69,8 @@ them against the signed-off accounts, then a Power BI report on top.
   2023 and 2024 are rebuilt to the unit; the report can be viewed by day, week,
   month, quarter or year
 
-**Read the write-ups:** [Data engineering](projects/wahat-retail-group-financial-report/data-engineering/README.md) ·
-[Power BI](projects/wahat-retail-group-financial-report/power-bi/README.md) ·
-[Pipeline code](projects/wahat-retail-group-financial-report/data-engineering/pipeline/)
+**Read the write-ups:** [Power BI](projects/wahat-retail-group-financial-report/power-bi/README.md) ·
+[Data engineering, in its own repository: dataeng-jupyter](https://github.com/shazmirza087/dataeng-jupyter)
 
 ---
 

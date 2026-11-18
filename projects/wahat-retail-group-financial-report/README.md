@@ -10,13 +10,15 @@ There was no list matching the three sets of accounts. The only guide was a rule
 
 ## The two halves
 
-### [The data engineering side](data-engineering/README.md)
+### [The data engineering side](https://github.com/shazmirza087/dataeng-jupyter)
 
 A medallion pipeline (Bronze, Silver, Gold) in PySpark and Delta Lake. It takes 14.4 million ledger lines from three systems, sorts every line into the group P&L and puts every bill on the right shop on the right date. It also turns dinars into riyals. Before any report table is touched, it checks itself against the 25 signed-off totals for 2023 and 2024.
 
-<img alt="Medallion architecture diagram" src="data-engineering/images/medallion-architecture.png" width="900">
+<img alt="Medallion architecture diagram" src="images/medallion-architecture.png" width="900">
 
-**[Read the data engineering write-up](data-engineering/README.md)** · **[Browse the pipeline code](data-engineering/pipeline/)**
+The pipeline has its own repository, [dataeng-jupyter](https://github.com/shazmirza087/dataeng-jupyter), with the full write-up, the code, and the dev, uat and prod deployment setup.
+
+**[Read the data engineering write-up](https://github.com/shazmirza087/dataeng-jupyter)** · **[Browse the pipeline code](https://github.com/shazmirza087/dataeng-jupyter/tree/main/pipeline)**
 
 ### [The Power BI side](power-bi/README.md)
 

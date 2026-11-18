@@ -1,5 +1,0 @@
-.ipynb_checkpoints/
-__pycache__/
-spark-warehouse/
-metastore_db/
-derby.log

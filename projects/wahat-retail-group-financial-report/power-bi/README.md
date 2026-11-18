@@ -1,6 +1,6 @@
 # Wahat Retail Group Financial Report: the Power BI side
 
-[Back to the portfolio](../../../README.md) · [Project overview](../README.md) · [The data engineering side](../data-engineering/README.md)
+[Back to the portfolio](../../../README.md) · [Project overview](../README.md) · [The data engineering side](https://github.com/shazmirza087/dataeng-jupyter)
 
 **One report that tells a shop owner how all his shops are doing. Every number in it checks out.**
 
@@ -175,7 +175,7 @@ Every table and every number tile shows **full numbers, to the last riyal** (⃁
 
 This is the part a buyer doesn't see, but it is why the report is quick.
 
-- **All the heavy sorting happens before the data reaches Power BI.** Matching the three account lists, fixing the dinars, finding the right shop for each bill, flipping the budget signs: all of it is done in the data pipeline (see the [data engineering write-up](../data-engineering/README.md)).
+- **All the heavy sorting happens before the data reaches Power BI.** Matching the three account lists, fixing the dinars, finding the right shop for each bill, flipping the budget signs: all of it is done in the data pipeline (see the [data engineering write-up](https://github.com/shazmirza087/dataeng-jupyter), which lives in its own repository).
 - So inside Power BI, almost every number is just **a plain sum**. Sums are the fastest thing Power BI can do.
 - **"Last year", "change vs last year" and "year to date" are written once** and reused by every number. Nobody writes the same formula fifty times.
 - **The P&L table is driven by a list of lines**, not one giant formula full of "if this, then that".
