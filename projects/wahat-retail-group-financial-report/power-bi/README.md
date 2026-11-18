@@ -3472,12 +3472,26 @@ report page, 1600 x 1170
 
 | Visual | Type | Fields |
 |---|---|---|
+| `footer_0` | Text (shape) | Text: Footer Period |
+| `footer_1` | Text (shape) | Text: Footer Banners |
+| `footer_2` | Text (shape) | Text: Footer Currency |
+| `footer_3` | Text (shape) | Text: Footer Sign-off |
 | `ov_atv` | Line chart | Category: Period (View by switch); Y: Average Transaction Value (label "This year"); Y: Average Transaction Value PY (label "Prior year") |
 | `ov_banner_margin` | Line chart | Category: Period (View by switch); Series: Banner; Y: EBITDA Margin % |
 | `ov_bridge` | Waterfall | Category: BridgeStep; Y: Profit Contribution |
 | `ov_bud_card` | Card | Data: EBITDA vs Budget |
 | `ov_bud_spark` | Line chart | Category: MonthStart; Y: EBITDA vs Budget |
 | `ov_bullet` | Bar chart | Y: Net Revenue Achieved % (label "Net revenue"); Y: Gross Profit Achieved % (label "Gross profit"); Y: Opex Achieved % (label "Opex"); Y: EBITDA Achieved % (label "EBITDA") |
+| `ov_check_0` | Text (shape) | Text: Check Sign-off Text |
+| `ov_check_0_icon` | Text (shape) | Text: Check Sign-off Icon |
+| `ov_check_1` | Text (shape) | Text: Check Mapping Text |
+| `ov_check_1_icon` | Text (shape) | Text: Check Mapping Icon |
+| `ov_check_2` | Text (shape) | Text: Check Journals Text |
+| `ov_check_2_icon` | Text (shape) | Text: Check Journals Icon |
+| `ov_check_3` | Text (shape) | Text: Check Accounts Text |
+| `ov_check_3_icon` | Text (shape) | Text: Check Accounts Icon |
+| `ov_check_4` | Text (shape) | Text: Check Year Text |
+| `ov_check_4_icon` | Text (shape) | Text: Check Year Icon |
 | `ov_eb_card` | Card | Data: EBITDA |
 | `ov_eb_spark` | Line chart | Category: MonthStart; Y: EBITDA |
 | `ov_gm_card` | Card | Data: Gross Margin % (label "GROSS MARGIN") |
@@ -3601,6 +3615,7 @@ drillthrough page, 1600 x 688
 | `sd_atv_card` | Card | Data: Average Transaction Value (label "AVERAGE TRANSACTION") |
 | `sd_bridge` | Waterfall | Category: StoreBridgeStep; Y: Profit Contribution |
 | `sd_contrib_card` | Card | Data: Store Contribution |
+| `sd_facts` | Text (shape) | Text: Store Facts |
 | `sd_margin_card` | Card | Data: Store Contribution Margin % (label "CONTRIBUTION MARGIN") |
 | `sd_till_card` | Card | Data: Gross Till Sales (label "TILL SALES") |
 | `sd_trend` | Area chart | Category: Period (View by switch); Y: Store Contribution |
@@ -3611,6 +3626,15 @@ tooltip page, 320 x 208
 
 | Visual | Type | Fields |
 |---|---|---|
+| `tt_month_title` | Text (shape) | Text: TT Month Title |
+| `ttm_bud_chg` | Text (shape) | Text: TT EBITDA vs Budget Change |
+| `ttm_bud_val` | Text (shape) | Text: TT EBITDA vs Budget |
+| `ttm_eb_chg` | Text (shape) | Text: TT EBITDA Change |
+| `ttm_eb_val` | Text (shape) | Text: TT EBITDA |
+| `ttm_gm_chg` | Text (shape) | Text: TT Gross Margin Change |
+| `ttm_gm_val` | Text (shape) | Text: TT Gross Margin |
+| `ttm_nr_chg` | Text (shape) | Text: TT Net Revenue Change |
+| `ttm_nr_val` | Text (shape) | Text: TT Net Revenue |
 | `ttm_trend` | Line chart | Category: MonthStart; Y: TT Net Revenue Trend; Y: TT Hovered Month Revenue |
 
 #### TT Group Line
@@ -3619,6 +3643,11 @@ tooltip page, 320 x 166
 
 | Visual | Type | Fields |
 |---|---|---|
+| `tt_line_title` | Text (shape) | Text: TT Line Title |
+| `ttl_cy_lbl` | Text (shape) | Text: Year Label |
+| `ttl_cy_val` | Text (shape) | Text: TT Line Value |
+| `ttl_py_lbl` | Text (shape) | Text: TT Prior Year Label |
+| `ttl_py_val` | Text (shape) | Text: TT Line Prior Year |
 | `ttl_trend` | Line chart | Category: MonthStart; Y: TT Line Trend |
 
 #### TT Store
@@ -3627,7 +3656,14 @@ tooltip page, 320 x 296
 
 | Visual | Type | Fields |
 |---|---|---|
+| `tt_store_title` | Text (shape) | Text: TT Store Title |
+| `tts_c_chg` | Text (shape) | Text: TT Store Contribution Change |
+| `tts_c_lbl` | Text (shape) | Text: TT Contribution Label |
+| `tts_c_val` | Text (shape) | Text: TT Store Contribution |
+| `tts_fc_val` | Text (shape) | Text: TT Store Format City |
+| `tts_m_val` | Text (shape) | Text: TT Store Margin |
 | `tts_split` | 100% stacked bar | Y: TT Split COGS (label "COGS"); Y: TT Split Staff (label "Staff"); Y: TT Split Rent (label "Rent"); Y: TT Split Utilities and Consumables (label "Utilities and consumables"); Y: TT Split Contribution (label "Contribution") |
+| `tts_sq_val` | Text (shape) | Text: TT Store per Sqm |
 | `tts_trend` | Line chart | Category: MonthStart; Y: TT Store Trend |
 
 #### TT Banner
@@ -3636,4 +3672,9 @@ tooltip page, 320 x 146
 
 | Visual | Type | Fields |
 |---|---|---|
-
+| `tt_banner_title` | Text (shape) | Text: TT Banner Title |
+| `ttb_eb_val` | Text (shape) | Text: TT EBITDA Row |
+| `ttb_gp_val` | Text (shape) | Text: TT Gross Profit Row |
+| `ttb_np_val` | Text (shape) | Text: TT Net Profit |
+| `ttb_nr_val` | Text (shape) | Text: TT Net Revenue |
+| `ttb_ox_val` | Text (shape) | Text: TT Operating Expenses |
