@@ -160,13 +160,16 @@ Move the mouse over a month, a shop or a P&L line, and a small pop-up card appea
 
 ### 8. Money always looks like money
 
-Every amount shows the Saudi riyal sign. Each chart picks the size that reads best:
-- big totals in **millions** (2,595.5M),
-- single shops in **thousands** (-234K),
-- money per square metre **in full** (887),
-- the check tables **in full, to the last riyal**, because a check has to be exact.
+Every amount shows the Saudi riyal sign, always on the left, with the minus sign after it (⃁ -1,938.4M). Every number on every page reads the same way, tooltips included.
 
-**Why:** short numbers are easier on the eye, but a reconciliation can't round.
+Each chart picks the size that reads best:
+- big totals in **millions** (⃁ 2,595.5M),
+- single shops in **thousands** (⃁ -234K),
+- money per square metre **in full** (⃁ 887).
+
+Every table shows **full numbers, to the last riyal** (⃁ 2,266,380,022).
+
+**Why:** short numbers are easier on the eye in a chart. A table is read line by line and has to add up, so it can't round.
 
 ### 9. Simple sums on the inside, so it stays fast
 
@@ -2123,7 +2126,7 @@ VAR BudgetMillions =
 VAR Pattern =
     IF ( ABS ( BudgetMillions ) >= 100, "#,0", "#,0.0" )
 RETURN
-    "budget SAR " & FORMAT ( BudgetMillions, Pattern ) & "M"
+    "budget ⃁ " & FORMAT ( BudgetMillions, Pattern ) & "M"
 ```
 
 ```dax
@@ -2133,7 +2136,7 @@ FORMAT ( [Stores Whole Year], "#,0" ) & " traded the whole year"
 
 ```dax
 Loss Stores Note =
-FORMAT ( [Stores Below Loss Threshold] + 0, "#,0" ) & " below SAR -50,000"
+FORMAT ( [Stores Below Loss Threshold] + 0, "#,0" ) & " below ⃁ -50,000"
 ```
 
 ```dax
@@ -3050,7 +3053,7 @@ RETURN
 TT Net Revenue =
 VAR AmountShown = [Net Revenue]
 RETURN
-    IF ( NOT ISBLANK ( AmountShown ), IF ( AmountShown < 0, "-", "" ) & "SAR " & SWITCH ( TRUE (), ABS ( AmountShown ) >= 1E9, FORMAT ( ABS ( AmountShown ) / 1E9, "0.00" ) & "bn", ABS ( AmountShown ) >= 1E8, FORMAT ( ABS ( AmountShown ) / 1E6, "#,0" ) & "M", ABS ( AmountShown ) >= 1E6, FORMAT ( ABS ( AmountShown ) / 1E6, "0.0" ) & "M", ABS ( AmountShown ) >= 1E5, FORMAT ( ABS ( AmountShown ) / 1E3, "#,0" ) & "K", ABS ( AmountShown ) >= 1E3, FORMAT ( ABS ( AmountShown ) / 1E3, "0.0" ) & "K", FORMAT ( ABS ( AmountShown ), "#,0" ) ) )
+    IF ( NOT ISBLANK ( AmountShown ), "⃁ " & IF ( AmountShown < 0, "-", "" ) & SWITCH ( TRUE (), ABS ( AmountShown ) >= 1E9, FORMAT ( ABS ( AmountShown ) / 1E9, "0.00" ) & "bn", ABS ( AmountShown ) >= 1E8, FORMAT ( ABS ( AmountShown ) / 1E6, "#,0" ) & "M", ABS ( AmountShown ) >= 1E6, FORMAT ( ABS ( AmountShown ) / 1E6, "0.0" ) & "M", ABS ( AmountShown ) >= 1E5, FORMAT ( ABS ( AmountShown ) / 1E3, "#,0" ) & "K", ABS ( AmountShown ) >= 1E3, FORMAT ( ABS ( AmountShown ) / 1E3, "0.0" ) & "K", FORMAT ( ABS ( AmountShown ), "#,0" ) ) )
 ```
 
 ```dax
@@ -3094,7 +3097,7 @@ RETURN
 TT EBITDA =
 VAR AmountShown = [EBITDA]
 RETURN
-    IF ( NOT ISBLANK ( AmountShown ), IF ( AmountShown < 0, "-", "" ) & "SAR " & SWITCH ( TRUE (), ABS ( AmountShown ) >= 1E9, FORMAT ( ABS ( AmountShown ) / 1E9, "0.00" ) & "bn", ABS ( AmountShown ) >= 1E8, FORMAT ( ABS ( AmountShown ) / 1E6, "#,0" ) & "M", ABS ( AmountShown ) >= 1E6, FORMAT ( ABS ( AmountShown ) / 1E6, "0.0" ) & "M", ABS ( AmountShown ) >= 1E5, FORMAT ( ABS ( AmountShown ) / 1E3, "#,0" ) & "K", ABS ( AmountShown ) >= 1E3, FORMAT ( ABS ( AmountShown ) / 1E3, "0.0" ) & "K", FORMAT ( ABS ( AmountShown ), "#,0" ) ) )
+    IF ( NOT ISBLANK ( AmountShown ), "⃁ " & IF ( AmountShown < 0, "-", "" ) & SWITCH ( TRUE (), ABS ( AmountShown ) >= 1E9, FORMAT ( ABS ( AmountShown ) / 1E9, "0.00" ) & "bn", ABS ( AmountShown ) >= 1E8, FORMAT ( ABS ( AmountShown ) / 1E6, "#,0" ) & "M", ABS ( AmountShown ) >= 1E6, FORMAT ( ABS ( AmountShown ) / 1E6, "0.0" ) & "M", ABS ( AmountShown ) >= 1E5, FORMAT ( ABS ( AmountShown ) / 1E3, "#,0" ) & "K", ABS ( AmountShown ) >= 1E3, FORMAT ( ABS ( AmountShown ) / 1E3, "0.0" ) & "K", FORMAT ( ABS ( AmountShown ), "#,0" ) ) )
 ```
 
 ```dax
@@ -3115,7 +3118,7 @@ RETURN
 TT EBITDA vs Budget =
 VAR BudgetGap = [EBITDA] - [Budget EBITDA]
 RETURN
-    IF ( ISBLANK ( [Budget EBITDA] ), "no budget", IF ( BudgetGap >= 0, "+", "-" ) & "SAR " & SWITCH ( TRUE (), ABS ( BudgetGap ) >= 1E9, FORMAT ( ABS ( BudgetGap ) / 1E9, "0.00" ) & "bn", ABS ( BudgetGap ) >= 1E8, FORMAT ( ABS ( BudgetGap ) / 1E6, "#,0" ) & "M", ABS ( BudgetGap ) >= 1E6, FORMAT ( ABS ( BudgetGap ) / 1E6, "0.0" ) & "M", ABS ( BudgetGap ) >= 1E5, FORMAT ( ABS ( BudgetGap ) / 1E3, "#,0" ) & "K", ABS ( BudgetGap ) >= 1E3, FORMAT ( ABS ( BudgetGap ) / 1E3, "0.0" ) & "K", FORMAT ( ABS ( BudgetGap ), "#,0" ) ) )
+    IF ( ISBLANK ( [Budget EBITDA] ), "no budget", "⃁ " & IF ( BudgetGap >= 0, "+", "-" ) & SWITCH ( TRUE (), ABS ( BudgetGap ) >= 1E9, FORMAT ( ABS ( BudgetGap ) / 1E9, "0.00" ) & "bn", ABS ( BudgetGap ) >= 1E8, FORMAT ( ABS ( BudgetGap ) / 1E6, "#,0" ) & "M", ABS ( BudgetGap ) >= 1E6, FORMAT ( ABS ( BudgetGap ) / 1E6, "0.0" ) & "M", ABS ( BudgetGap ) >= 1E5, FORMAT ( ABS ( BudgetGap ) / 1E3, "#,0" ) & "K", ABS ( BudgetGap ) >= 1E3, FORMAT ( ABS ( BudgetGap ) / 1E3, "0.0" ) & "K", FORMAT ( ABS ( BudgetGap ), "#,0" ) ) )
 ```
 
 ```dax
@@ -3166,14 +3169,14 @@ IF ( HASONEVALUE ( DimDate[Year] ), "FY" & ( VALUES ( DimDate[Year] ) - 1 ), "Pr
 TT Line Value =
 VAR AmountShown = [Line Value]
 RETURN
-    IF ( NOT ISBLANK ( AmountShown ), IF ( AmountShown < 0, "-", "" ) & "SAR " & SWITCH ( TRUE (), ABS ( AmountShown ) >= 1E9, FORMAT ( ABS ( AmountShown ) / 1E9, "0.00" ) & "bn", ABS ( AmountShown ) >= 1E8, FORMAT ( ABS ( AmountShown ) / 1E6, "#,0" ) & "M", ABS ( AmountShown ) >= 1E6, FORMAT ( ABS ( AmountShown ) / 1E6, "0.0" ) & "M", ABS ( AmountShown ) >= 1E5, FORMAT ( ABS ( AmountShown ) / 1E3, "#,0" ) & "K", ABS ( AmountShown ) >= 1E3, FORMAT ( ABS ( AmountShown ) / 1E3, "0.0" ) & "K", FORMAT ( ABS ( AmountShown ), "#,0" ) ) )
+    IF ( NOT ISBLANK ( AmountShown ), "⃁ " & IF ( AmountShown < 0, "-", "" ) & SWITCH ( TRUE (), ABS ( AmountShown ) >= 1E9, FORMAT ( ABS ( AmountShown ) / 1E9, "0.00" ) & "bn", ABS ( AmountShown ) >= 1E8, FORMAT ( ABS ( AmountShown ) / 1E6, "#,0" ) & "M", ABS ( AmountShown ) >= 1E6, FORMAT ( ABS ( AmountShown ) / 1E6, "0.0" ) & "M", ABS ( AmountShown ) >= 1E5, FORMAT ( ABS ( AmountShown ) / 1E3, "#,0" ) & "K", ABS ( AmountShown ) >= 1E3, FORMAT ( ABS ( AmountShown ) / 1E3, "0.0" ) & "K", FORMAT ( ABS ( AmountShown ), "#,0" ) ) )
 ```
 
 ```dax
 TT Line Prior Year =
 VAR AmountShown = CALCULATE ( [Line Value], 'Time Intelligence'[Time Calculation] = "PY" )
 RETURN
-    IF ( NOT ISBLANK ( AmountShown ), IF ( AmountShown < 0, "-", "" ) & "SAR " & SWITCH ( TRUE (), ABS ( AmountShown ) >= 1E9, FORMAT ( ABS ( AmountShown ) / 1E9, "0.00" ) & "bn", ABS ( AmountShown ) >= 1E8, FORMAT ( ABS ( AmountShown ) / 1E6, "#,0" ) & "M", ABS ( AmountShown ) >= 1E6, FORMAT ( ABS ( AmountShown ) / 1E6, "0.0" ) & "M", ABS ( AmountShown ) >= 1E5, FORMAT ( ABS ( AmountShown ) / 1E3, "#,0" ) & "K", ABS ( AmountShown ) >= 1E3, FORMAT ( ABS ( AmountShown ) / 1E3, "0.0" ) & "K", FORMAT ( ABS ( AmountShown ), "#,0" ) ) )
+    IF ( NOT ISBLANK ( AmountShown ), "⃁ " & IF ( AmountShown < 0, "-", "" ) & SWITCH ( TRUE (), ABS ( AmountShown ) >= 1E9, FORMAT ( ABS ( AmountShown ) / 1E9, "0.00" ) & "bn", ABS ( AmountShown ) >= 1E8, FORMAT ( ABS ( AmountShown ) / 1E6, "#,0" ) & "M", ABS ( AmountShown ) >= 1E6, FORMAT ( ABS ( AmountShown ) / 1E6, "0.0" ) & "M", ABS ( AmountShown ) >= 1E5, FORMAT ( ABS ( AmountShown ) / 1E3, "#,0" ) & "K", ABS ( AmountShown ) >= 1E3, FORMAT ( ABS ( AmountShown ) / 1E3, "0.0" ) & "K", FORMAT ( ABS ( AmountShown ), "#,0" ) ) )
 ```
 
 ```dax
@@ -3199,7 +3202,7 @@ TT Contribution Label =
 TT Store Contribution =
 VAR AmountShown = [Store Contribution]
 RETURN
-    IF ( NOT ISBLANK ( AmountShown ), IF ( AmountShown < 0, "-", "" ) & "SAR " & SWITCH ( TRUE (), ABS ( AmountShown ) >= 1E9, FORMAT ( ABS ( AmountShown ) / 1E9, "0.00" ) & "bn", ABS ( AmountShown ) >= 1E8, FORMAT ( ABS ( AmountShown ) / 1E6, "#,0" ) & "M", ABS ( AmountShown ) >= 1E6, FORMAT ( ABS ( AmountShown ) / 1E6, "0.0" ) & "M", ABS ( AmountShown ) >= 1E5, FORMAT ( ABS ( AmountShown ) / 1E3, "#,0" ) & "K", ABS ( AmountShown ) >= 1E3, FORMAT ( ABS ( AmountShown ) / 1E3, "0.0" ) & "K", FORMAT ( ABS ( AmountShown ), "#,0" ) ) )
+    IF ( NOT ISBLANK ( AmountShown ), "⃁ " & IF ( AmountShown < 0, "-", "" ) & SWITCH ( TRUE (), ABS ( AmountShown ) >= 1E9, FORMAT ( ABS ( AmountShown ) / 1E9, "0.00" ) & "bn", ABS ( AmountShown ) >= 1E8, FORMAT ( ABS ( AmountShown ) / 1E6, "#,0" ) & "M", ABS ( AmountShown ) >= 1E6, FORMAT ( ABS ( AmountShown ) / 1E6, "0.0" ) & "M", ABS ( AmountShown ) >= 1E5, FORMAT ( ABS ( AmountShown ) / 1E3, "#,0" ) & "K", ABS ( AmountShown ) >= 1E3, FORMAT ( ABS ( AmountShown ) / 1E3, "0.0" ) & "K", FORMAT ( ABS ( AmountShown ), "#,0" ) ) )
 ```
 
 ```dax
@@ -3225,7 +3228,7 @@ FORMAT ( [Store Contribution Margin %], "0.0%" )
 TT Store per Sqm =
 VAR ContributionPerSqm = [Contribution per Sqm]
 RETURN
-    IF ( ISBLANK ( ContributionPerSqm ), "n/a", FORMAT ( ContributionPerSqm, "#,0" ) & " SAR" )
+    IF ( ISBLANK ( ContributionPerSqm ), "n/a", "⃁ " & FORMAT ( ContributionPerSqm, "#,0" ) )
 ```
 
 ```dax
@@ -3295,21 +3298,21 @@ RETURN
 TT Gross Profit =
 VAR AmountShown = [Gross Profit]
 RETURN
-    IF ( NOT ISBLANK ( AmountShown ), IF ( AmountShown < 0, "-", "" ) & "SAR " & SWITCH ( TRUE (), ABS ( AmountShown ) >= 1E9, FORMAT ( ABS ( AmountShown ) / 1E9, "0.00" ) & "bn", ABS ( AmountShown ) >= 1E8, FORMAT ( ABS ( AmountShown ) / 1E6, "#,0" ) & "M", ABS ( AmountShown ) >= 1E6, FORMAT ( ABS ( AmountShown ) / 1E6, "0.0" ) & "M", ABS ( AmountShown ) >= 1E5, FORMAT ( ABS ( AmountShown ) / 1E3, "#,0" ) & "K", ABS ( AmountShown ) >= 1E3, FORMAT ( ABS ( AmountShown ) / 1E3, "0.0" ) & "K", FORMAT ( ABS ( AmountShown ), "#,0" ) ) )
+    IF ( NOT ISBLANK ( AmountShown ), "⃁ " & IF ( AmountShown < 0, "-", "" ) & SWITCH ( TRUE (), ABS ( AmountShown ) >= 1E9, FORMAT ( ABS ( AmountShown ) / 1E9, "0.00" ) & "bn", ABS ( AmountShown ) >= 1E8, FORMAT ( ABS ( AmountShown ) / 1E6, "#,0" ) & "M", ABS ( AmountShown ) >= 1E6, FORMAT ( ABS ( AmountShown ) / 1E6, "0.0" ) & "M", ABS ( AmountShown ) >= 1E5, FORMAT ( ABS ( AmountShown ) / 1E3, "#,0" ) & "K", ABS ( AmountShown ) >= 1E3, FORMAT ( ABS ( AmountShown ) / 1E3, "0.0" ) & "K", FORMAT ( ABS ( AmountShown ), "#,0" ) ) )
 ```
 
 ```dax
 TT Operating Expenses =
 VAR AmountShown = [Operating Expenses]
 RETURN
-    IF ( NOT ISBLANK ( AmountShown ), IF ( AmountShown < 0, "-", "" ) & "SAR " & SWITCH ( TRUE (), ABS ( AmountShown ) >= 1E9, FORMAT ( ABS ( AmountShown ) / 1E9, "0.00" ) & "bn", ABS ( AmountShown ) >= 1E8, FORMAT ( ABS ( AmountShown ) / 1E6, "#,0" ) & "M", ABS ( AmountShown ) >= 1E6, FORMAT ( ABS ( AmountShown ) / 1E6, "0.0" ) & "M", ABS ( AmountShown ) >= 1E5, FORMAT ( ABS ( AmountShown ) / 1E3, "#,0" ) & "K", ABS ( AmountShown ) >= 1E3, FORMAT ( ABS ( AmountShown ) / 1E3, "0.0" ) & "K", FORMAT ( ABS ( AmountShown ), "#,0" ) ) )
+    IF ( NOT ISBLANK ( AmountShown ), "⃁ " & IF ( AmountShown < 0, "-", "" ) & SWITCH ( TRUE (), ABS ( AmountShown ) >= 1E9, FORMAT ( ABS ( AmountShown ) / 1E9, "0.00" ) & "bn", ABS ( AmountShown ) >= 1E8, FORMAT ( ABS ( AmountShown ) / 1E6, "#,0" ) & "M", ABS ( AmountShown ) >= 1E6, FORMAT ( ABS ( AmountShown ) / 1E6, "0.0" ) & "M", ABS ( AmountShown ) >= 1E5, FORMAT ( ABS ( AmountShown ) / 1E3, "#,0" ) & "K", ABS ( AmountShown ) >= 1E3, FORMAT ( ABS ( AmountShown ) / 1E3, "0.0" ) & "K", FORMAT ( ABS ( AmountShown ), "#,0" ) ) )
 ```
 
 ```dax
 TT Net Profit =
 VAR AmountShown = [Net Profit]
 RETURN
-    IF ( NOT ISBLANK ( AmountShown ), IF ( AmountShown < 0, "-", "" ) & "SAR " & SWITCH ( TRUE (), ABS ( AmountShown ) >= 1E9, FORMAT ( ABS ( AmountShown ) / 1E9, "0.00" ) & "bn", ABS ( AmountShown ) >= 1E8, FORMAT ( ABS ( AmountShown ) / 1E6, "#,0" ) & "M", ABS ( AmountShown ) >= 1E6, FORMAT ( ABS ( AmountShown ) / 1E6, "0.0" ) & "M", ABS ( AmountShown ) >= 1E5, FORMAT ( ABS ( AmountShown ) / 1E3, "#,0" ) & "K", ABS ( AmountShown ) >= 1E3, FORMAT ( ABS ( AmountShown ) / 1E3, "0.0" ) & "K", FORMAT ( ABS ( AmountShown ), "#,0" ) ) )
+    IF ( NOT ISBLANK ( AmountShown ), "⃁ " & IF ( AmountShown < 0, "-", "" ) & SWITCH ( TRUE (), ABS ( AmountShown ) >= 1E9, FORMAT ( ABS ( AmountShown ) / 1E9, "0.00" ) & "bn", ABS ( AmountShown ) >= 1E8, FORMAT ( ABS ( AmountShown ) / 1E6, "#,0" ) & "M", ABS ( AmountShown ) >= 1E6, FORMAT ( ABS ( AmountShown ) / 1E6, "0.0" ) & "M", ABS ( AmountShown ) >= 1E5, FORMAT ( ABS ( AmountShown ) / 1E3, "#,0" ) & "K", ABS ( AmountShown ) >= 1E3, FORMAT ( ABS ( AmountShown ) / 1E3, "0.0" ) & "K", FORMAT ( ABS ( AmountShown ), "#,0" ) ) )
 ```
 
 ```dax
@@ -3446,13 +3449,19 @@ The 36-month trends use the hidden `Trend Month` table as their axis, so the tre
 
 ### Display units
 
-All money measures use the Saudi riyal currency format. Display units are set per visual:
+All money measures share one static format string, with the riyal sign on the left for positive and negative values alike:
+
+```
+"⃁"\ #,0;"⃁"\ -#,0;"⃁"\ #,0
+```
+
+The tooltip measures that build text use the same sign, so tooltips match the visuals. Display units are set per visual:
 
 | Visual | Units |
 |---|---|
-| Profit bridges, contribution by city, P&L statement, budget variance table, monthly revenue, sales and budget charts, banner scorecard | Millions, 1 decimal |
-| Store Detail bridge and trend, store league table | Thousands |
-| KPI cards, per-sqm figures, every table on Controls | Full numbers, because a reconciliation has to be exact |
+| Profit bridges, contribution by city, monthly revenue, sales and budget charts | Millions, 1 decimal |
+| Store Detail bridge and trend | Thousands |
+| Every table and matrix (P&L statement, budget variance, banner scorecard, store league table, Controls), KPI cards, per-sqm figures | None: full numbers, so every row adds up |
 | Everything else | Auto |
 
 ### Every page and visual
