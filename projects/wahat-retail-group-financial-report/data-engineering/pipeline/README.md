@@ -89,17 +89,16 @@ pipeline/
   environment.yml
 ```
 
-Data lives outside this folder:
+Data lives outside this folder. Every location is set with an environment variable (see Settings), so nothing in the code points at a particular machine:
 
 ```
-Retail Dashboard/
-  DD-RET-005_FactGLLines.parquet          raw (RAW_FOLDER)
-  DD-RET-005_Supporting_Tables/           raw
-  Wahat Group Performance/
-    mapping/                              mapping CSVs (MAPPING_FOLDER)
-    lakehouse/dev/bronze, silver, gold, metadata   Delta tables (LAKEHOUSE), not in git
-    lakehouse/dev/publish/                published parquet for Power BI (PUBLISH_FOLDER)
-    pipeline/                             this folder
+<raw folder>/                       WAHAT_RAW_FOLDER: the raw DD-RET-005 files
+  DD-RET-005_FactGLLines.parquet
+  DD-RET-005_Supporting_Tables/
+<mapping folder>/                   WAHAT_MAPPING_FOLDER: the mapping CSVs
+<lakehouse>/<env>/                  WAHAT_LAKEHOUSE: Delta tables, not in git
+  bronze/  silver/  gold/  metadata/
+  publish/                          parquet files for Power BI (WAHAT_PUBLISH_FOLDER)
 ```
 
 ## One-time setup on Windows
@@ -116,13 +115,13 @@ This installs Python 3.11, Java 17, PySpark 3.5.3, Delta Lake 3.2.1, pandas, pya
 If Windows blocks the new environment's `python.exe` (a Device Guard or Smart App Control message), use the Anaconda `base` environment instead: install the Microsoft Build of OpenJDK 17 (tick *Set JAVA_HOME* in the installer), then run `pip install pyspark==3.5.3 delta-spark==3.2.1`. The pipeline works on Python versions newer than Spark 3.5 supports, because it never starts a Python worker.
 
 **2. Add winutils.** Spark needs two Hadoop helper files to read and write local folders on Windows.
-- Download `winutils.exe` and `hadoop.dll` for Hadoop 3.3 (the `cdarlint/winutils` repository on GitHub, folder `hadoop-3.3.5/bin`).
-- Put both in `C:\hadoop\bin`.
-- If you use another folder, set the `HADOOP_HOME` environment variable to the folder that holds `bin`.
+- Get `winutils.exe` and `hadoop.dll` built for Hadoop 3.3.
+- Put both in a folder called `bin`.
+- Set the `HADOOP_HOME` environment variable to the folder that holds `bin`.
 
 The configuration notebook checks for this and stops with a clear message if the files are missing.
 
-**3. First run needs internet.** On its first start, Spark downloads the Delta Lake jars from Maven (a few MB) into `%USERPROFILE%\.ivy2`. After that it runs offline.
+**3. First run needs internet.** On its first start, Spark downloads the Delta Lake jars from Maven (a few MB) into the local Ivy cache. After that it runs offline.
 
 **4. Start Jupyter from the environment:**
 
@@ -189,15 +188,16 @@ A Delta table is a folder of part files plus a transaction log. Power BI's parqu
 
 ## Settings
 
-All paths have defaults that work from this folder. Override any of them with an environment variable before starting Jupyter:
+Every location comes from an environment variable, set before starting Jupyter. The four folder variables are required: the configuration notebook stops with a clear message if one is missing.
 
 | Variable | Default | Use |
 |---|---|---|
 | `WAHAT_ENV` | `dev` | Lakehouse sub-folder, so dev and prod data never mix |
-| `WAHAT_RAW_FOLDER` | the folder above the project | Raw DD-RET-005 files |
-| `WAHAT_MAPPING_FOLDER` | `../mapping` | Mapping CSVs |
-| `WAHAT_LAKEHOUSE` | `../lakehouse` | Where the Delta tables live |
-| `WAHAT_PUBLISH_FOLDER` | `../lakehouse/<env>/publish` | Where Power BI reads from |
+| `WAHAT_RAW_FOLDER` | required | Raw DD-RET-005 files |
+| `WAHAT_MAPPING_FOLDER` | required | Mapping CSVs |
+| `WAHAT_LAKEHOUSE` | required | Where the Delta tables live |
+| `WAHAT_PUBLISH_FOLDER` | `publish` inside the lakehouse | Where Power BI reads from |
+| `HADOOP_HOME` | required on Windows | Folder that holds `bin/winutils.exe` |
 | `WAHAT_TABLE_FORMAT` | `delta` | `parquet` runs without Delta, for a quick test |
 | `WAHAT_DRIVER_MEMORY` | `6g` | Spark memory. Lower it on an 8 GB machine |
 
