@@ -70,7 +70,7 @@ them against the signed-off accounts, then a Power BI report on top.
   month, quarter or year
 
 **Read the write-ups:** [Power BI](projects/wahat-retail-group-financial-report/power-bi/README.md) ·
-[Data engineering, in its own repository: dataeng-jupyter](https://github.com/shazmirza087/dataeng-jupyter)
+[Data engineering](https://github.com/shazmirza087/dataeng-jupyter)
 
 ---
 
