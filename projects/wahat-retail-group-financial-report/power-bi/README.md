@@ -162,14 +162,14 @@ Move the mouse over a month, a shop or a P&L line, and a small pop-up card appea
 
 Every amount shows the Saudi riyal sign, always on the left, with the minus sign after it (⃁ -1,938.4M). Every number on every page reads the same way, tooltips included.
 
-Each chart picks the size that reads best:
-- big totals in **millions** (⃁ 2,595.5M),
-- single shops in **thousands** (⃁ -234K),
-- money per square metre **in full** (⃁ 887).
+Every chart picks its own size automatically, so it always fits whatever is selected:
+- a whole year for the group reads in **billions** (⃁ 2.6bn),
+- one shop reads in **millions or thousands** (⃁ 4.9M, ⃁ -20K),
+- a filter with no data shows a clean empty chart, not strings of zeros.
 
-Every table shows **full numbers, to the last riyal** (⃁ 2,266,380,022).
+Every table and every number tile shows **full numbers, to the last riyal** (⃁ 2,266,380,022).
 
-**Why:** short numbers are easier on the eye in a chart. A table is read line by line and has to add up, so it can't round.
+**Why:** a chart is for shape, so it can round. A table is read line by line and has to add up, so it can't.
 
 ### 9. Simple sums on the inside, so it stays fast
 
@@ -3459,10 +3459,8 @@ The tooltip measures that build text use the same sign, so tooltips match the vi
 
 | Visual | Units |
 |---|---|
-| Profit bridges, contribution by city, monthly revenue, sales and budget charts | Millions, 1 decimal |
-| Store Detail bridge and trend | Thousands |
+| Every chart (bridges, trends, bar charts), labels and axes | Auto, so the unit follows the data and empty filters stay clean |
 | Every table and matrix (P&L statement, budget variance, banner scorecard, store league table, Controls), KPI cards, per-sqm figures | None: full numbers, so every row adds up |
-| Everything else | Auto |
 
 ### Every page and visual
 
