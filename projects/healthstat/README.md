@@ -15,9 +15,9 @@
 | **46** Deneb visuals | 23 per theme: both distributions, the choropleth, the driver panels, the card sparklines |
 | **26,286** rows | one year of New York hip replacements, 151 hospitals |
 
-This is a Power BI report about hospital performance, but the interesting part
-is not the subject. It is that every number, every sentence and every colour on
-screen is produced by the model. Nothing is typed into a text box. Change a
+This is a Power BI report about hospital performance. What makes it different is
+that every number, every sentence and every colour on screen is produced by the
+model. Nothing is typed into a text box. Change a
 slicer and the prose rewrites itself, the units rescale, and the whole thing
 re-themes from a two-row table.
 
@@ -51,8 +51,8 @@ Most of what you see is not a stock Power BI visual:
 
 ## What the report is for
 
-One thing needs explaining before the screenshots make sense, because the whole
-model is shaped around it.
+One thing needs explaining before the screenshots, because the whole model is
+built around it.
 
 A hospital with a long average stay might be doing a poor job. Or it might be
 taking the sickest patients, who were always going to stay longer. A raw average
@@ -60,7 +60,7 @@ cannot tell those apart. So the spine of the model is a severity-adjusted
 comparison: for every hospital, work out the stay its own mix of patients
 predicts, then compare what actually happened against that.
 
-That single requirement is what forces most of the design. It needs a measure
+Most of the design follows from that. It needs a measure
 that can hold one filter while dropping others, a floor to stop four-patient
 hospitals topping the rankings, and a set of visuals that can show observed and
 expected side by side.
@@ -77,7 +77,7 @@ expected side by side.
   <img alt="HealthStat home page" src="../../screenshots/healthstat/home-dark.webp">
 </picture>
 
-Twelve cards, and not one of them has a word typed into it. This page uses
+There are twelve cards here, and none of them has typed text. This page uses
 **native card visuals**, each bound to a measure that returns a finished string:
 the five figures across the top, the five navigation card footers, the
 subtitle and the source line. That includes the one that switches between 847,
@@ -87,8 +87,8 @@ The five mini bar charts inside the navigation cards are **Vega-Lite specs in
 Deneb**. The footer timestamp comes from a one-row calculated table, so it
 reports when the data loaded rather than when you looked at it.
 
-The HTML measures start on the next page. This one makes the point that driving
-text from the model does not require them.
+The HTML measures start on the next page. This page shows that you don't need
+them to drive text from the model.
 
 ### Length of stay
 
@@ -100,14 +100,14 @@ text from the model does not require them.
 
 Five **HTML measures** on this page. Four are the KPI cards along the top,
 including the range track and its thumb, which are part of the same markup
-rather than a separate visual. The fifth is the green banner across the middle:
+instead of a separate visual. The fifth is the green banner across the middle:
 it names the hospitals, states the ratio and rewrites its own sentence structure
 when a selection makes the usual one nonsense.
 
 The panel on the left holds three views behind one set of chips: this ranking, a
 full matrix, and the distribution below. They are separate visuals stacked in a
-group, switched by bookmarks, so each is laid out properly for its own job
-rather than compromised into one chart. The breakdown panel on the right is a
+group, switched by bookmarks, so each one is laid out for its own job
+instead of one chart trying to do everything. The breakdown panel on the right is a
 **Deneb** spec.
 
 <picture>
@@ -200,8 +200,8 @@ hospital_discharges  ->  Map County                      (by county)
 
 The helpers are disconnected on purpose. Picking a theme or switching which
 measure a chart shows must change what you are looking at and never what is
-being counted. An unjoined table cannot leak a filter into the fact table, which
-is a guarantee rather than a convention.
+being counted. A table with no relationship can't pass a filter to the fact table, so there is
+no way for it to happen by accident.
 
 ### Calculated columns
 
@@ -227,7 +227,7 @@ would produce bars that look identical and click on nothing.
 
 ### Why the calculated tables exist
 
-The rule the whole model turns on:
+The rule behind all of them:
 
 > A measure can only be displayed. A column can be sorted by, grouped by, put on
 > an axis, dropped in a slicer, and clicked to filter the page.
@@ -254,10 +254,10 @@ was not one yet.
 the cost of driving every word on screen from the model. The other 106 do the
 arithmetic.
 
-Most of the arithmetic is ordinary. The work is in controlling what each measure
-is allowed to see.
+Most of the arithmetic is ordinary. The hard part is controlling which filters
+each measure is allowed to see.
 
-### The one that matters
+### Expected stay
 
 Expected stay is indirect standardisation. In plain terms: work out what each
 hospital's own patients should have needed, then compare that with what actually
@@ -327,9 +327,9 @@ DIVIDE (
 LOS O to E Ratio = DIVIDE ( [Average LOS Days], [Expected LOS Days] )
 ```
 
-The `ALLEXCEPT` is the whole trick: keep the severity grade that context
-transition just put in place, drop everything else that would otherwise narrow
-the statewide benchmark to the hospital being measured.
+The `ALLEXCEPT` does the main work. It keeps the severity grade that context
+transition just put in place and drops every other filter, which would otherwise
+narrow the statewide benchmark down to the hospital being measured.
 
 ### The guard that runs through thirteen measures
 
@@ -351,9 +351,9 @@ CALCULATE (
 ```
 
 Thirteen measures take extremes or ranks over hospitals and all thirteen apply
-it. They have to. A written banner naming a different worst hospital from the
-card directly above it is worse than no banner, and that is exactly the bug that
-shipped the first time because two of them did not.
+it. They have to. A banner that names a different worst hospital from the card right
+above it is worse than no banner at all. That bug did ship the first time, because
+two of them were missing the floor.
 
 ### The rest of the arithmetic
 
@@ -372,7 +372,7 @@ Averaging each hospital's own ratio instead would give a different and wrong
 answer, because it would treat a hospital doing four operations as equal to one
 doing four thousand.
 
-One is not ordinary. The scatter chart needs to flag hospitals sitting well off
+One is more involved. The scatter chart needs to flag hospitals sitting well off
 the volume-outcome trend, and it does it in four steps:
 
 1. **Draw the best-fit line** through all the hospitals. The line is fitted
@@ -392,11 +392,11 @@ $$
 \text{Outlier score} = \frac{\text{this hospital's distance from the line} - \text{the middle distance}}{\text{the typical distance from the middle}}
 $$
 
-Step 3 is the one that matters. The textbook method uses the *average* distance
+Step 3 is the important one. The textbook method uses the *average* distance
 and the standard deviation, and that quietly fails here: the handful of unusual
 hospitals I am trying to find are themselves what makes the average distance
 large, so they end up hiding inside their own effect on the ruler. Using the
-middle value instead makes the ruler immune to them. Two extreme hospitals
+middle value instead means they can't stretch the ruler. Two extreme hospitals
 cannot move a median the way they move an average.
 
 There is also a constant of 0.6745 in the code, which rescales the result so
@@ -407,9 +407,9 @@ would in the textbook version. It changes the units, not the ranking.
 
 ## One report, two themes
 
-This is the piece of architecture I would point at first.
+This is the part of the build I am happiest with.
 
-The report exists in a dark and a light version. Not two reports: one model, one
+The report exists in a dark and a light version. It is not two reports. It is one model, one
 set of measures, one set of markup, and a two-row `DATATABLE` holding fifteen
 colour tokens per theme.
 
@@ -430,13 +430,13 @@ measure reads its colours through `SELECTEDVALUE` rather than having them typed
 in. A dark page and its light twin run the identical measure and get different
 output.
 
-The cost of getting this wrong is real, and I hit it. The one property on the
+I found out what happens when this goes wrong. The one property on the
 ranked charts still bound to a theme data colour instead of a token rendered
 fine on dark and did not draw at all on light. Everything else on that visual
 had an explicit light override. The reference line had been missed.
 
-The lesson is the architectural one: a theming system only holds if nothing
-opts out of it. One property on one visual was enough to break a page.
+So theming only works if every colour goes through the theme table. One missed
+property on one visual was enough to break a page.
 
 ---
 
@@ -511,8 +511,8 @@ RETURN
 Four measures return **inline SVG** instead, handed over as a `data:` URI on an
 image column. Two of them draw the deviation bar in every row of the matrix,
 centred on 1.00 and scaled to the 90th percentile of what is actually on
-screen, so one extreme value cannot flatten everyone else. Two things bite here
-and both are recorded in the model as comments: a `#` inside a `data:` URI
+screen, so one extreme value cannot flatten everyone else. Two things caught me out here,
+and both are noted in the model as comments: a `#` inside a `data:` URI
 starts a fragment and has to be encoded as `%23`, and `FORMAT` with `0.#`
 returns `12.` for a whole number, which is not a valid SVG coordinate and
 silently pins the bar to zero.
@@ -613,7 +613,7 @@ That mean is a free cross-check. It is computed inside the chart from raw
 counts, by a different route from the model measure, and it lands on the same
 2.65 every time the page renders.
 
-### Cross-filtering is what makes it a visual and not a picture
+### Making a hand-written chart cross-filter
 
 A normal column emits the value it stands for. The folded tail column stands for
 a range of nights, so it emits a predicate instead:
@@ -649,8 +649,8 @@ so each drops from its own label into the column it marks. And the mean marker
 is deliberately not the bars' own hue, because the first version was invisible
 wherever it crossed one.
 
-The pattern in all three: a Vega spec can be structurally perfect and still be
-wrong on screen. These only surface by rendering it and looking.
+All three had the same cause: the spec was valid, but the chart looked wrong on
+screen. The only way to catch that is to render it and look.
 
 ---
 
@@ -658,19 +658,19 @@ wrong on screen. These only surface by rendering it and looking.
 
 **Three views, one footprint.** The outlier panel on the stay and cost pages
 holds a ranking, a matrix and a distribution as three separate visuals in a
-group, switched by bookmarks from a chip row. Each is laid out properly for its
-own job instead of being compromised into one chart that does all three badly.
+group, switched by bookmarks from a chip row. Each can be laid out properly for its
+own job, instead of one chart trying to do all three.
 The chips are button states, so the active view is obvious without a legend.
 
 **Field parameters instead of visual duplication.** The scatter's vertical axis
 and the breakdown panel's dimension both come from field parameters. One visual,
 five measures, no bookmark stack to maintain.
 
-**Cross-filtering is written, not inherited.** A Deneb chart does not filter
+**Cross-filtering has to be written in.** A Deneb chart does not filter
 anything unless the spec says how. The distribution charts carry three
 handlers: a night column emits the night it stands for, the folded tail emits a
 range, and a click on empty canvas clears the selection. The middle one is the
-interesting case, because a column standing for "more than fourteen nights" has
+tricky case, because a column standing for "more than fourteen nights" has
 no single value to emit.
 
 ---
@@ -688,7 +688,7 @@ the comparison.
 **A documented O(n²) I chose to keep.** The scatter's outlier test refits the
 trend line once for every point the chart draws. At 151 hospitals that is fine.
 The comment in the model says so, and says that on a larger cohort it wants
-rebuilding as a calculated table. Known and bounded beats clever and fragile.
+rebuilding as a calculated table.
 
 **Projecting fewer fields.** The distribution charts take two fields from the
 model and derive everything else in the spec. Fewer projected fields means a
@@ -698,7 +698,7 @@ smaller query and fewer names that can be spelled wrong.
 
 ## How I test it
 
-Building something that looks right is the easy half.
+Getting it to look right was only half the job. This is how I check the numbers:
 
 - **Every headline figure appears on a second page by a different route.** The
   average stay on the landing page, on the stay page and inside the distribution
@@ -711,7 +711,7 @@ Building something that looks right is the easy half.
   nothing to compare, and colours that only work on one background.
 - **Generated prose runs on the same population as the card above it.** They
   share the volume floor, so a banner cannot contradict the card it sits under.
-- **Because it is PBIP, the diff is the review.** A visual is a file. Changing a
+- **PBIP makes changes easy to review.** A visual is a file. Changing a
   label colour or a Vega signal shows up as a few lines, which makes it possible
   to check what actually changed rather than what I meant to change.
 
@@ -741,19 +741,19 @@ the easiest for a reader to check. A fuller model would use all three.
 
 **Indirectly standardised ratios compare cleanly to 1.00 and less cleanly to
 each other**, because each hospital's expectation is built with its own weights.
-The report ranks on the score anyway, since it beats ranking on raw averages by
-a distance, but that is the trade-off and it belongs in the open.
+The report ranks on the score anyway, since it is far better than ranking on raw averages, but the limitation is
+worth stating.
 
 **A layout collision I have not solved.** On the hospital profile, the state
 average is an error bar and the facility value is a data label at the outside
 end of the bar. They collide whenever the hospital beats the state, which on
 that page is the common case. Native charts allow one label position per visual
 and the bars range from 12% to 77% of the plot width, so no single setting fits.
-The honest options are dropping the labels or rebuilding it as a bullet chart.
-It is on the list.
+The fix is either to drop the labels or to rebuild it as a bullet chart. It is
+on my list.
 
 **No trend analysis, deliberately.** The extract carries one discharge year with
-nothing finer inside it. Rather than manufacture a time axis, the report states
+nothing finer inside it. Instead of inventing a time axis, the report says
 that every figure is a snapshot.
 
 ---
@@ -784,7 +784,7 @@ distribution is a column per night and not a density curve.
 
 Half of all patients go home within two days, but the average is 2.65 because a
 thin tail drags it up. 113 of 151 hospitals run longer than their own case mix
-predicts, which sounds damning until you notice the benchmark is pulled down by
+predicts, which looks bad until you notice the benchmark is pulled down by
 a few very large specialist units. Cost per operation spans eleven times from
 cheapest to dearest. Only six programmes do 600 or more a year, they handle 36%
 of the state's work, and they run shorter and cheaper even after adjustment. Just
