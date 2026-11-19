@@ -490,6 +490,7 @@ Rows: **136**
 | IsLatest | boolean | yes |  |
 | StoreLabel | string |  | Store code and name without the group prefix, for tables (S-052 Hypermarket Jeddah 052). |
 | StoreShortName | string |  | Store name without the group prefix (Hypermarket Jeddah 052). Sits next to StoreCode in the league table, which keeps the table drillable to Store Detail. |
+| MapArea | string |  | The map shape a store sits in: its city, except Riffa and Isa Town, which share one shape ("Riffa and Isa Town") because both fall in Bahrain's Southern Governorate. Location for the store map. |
 
 </details>
 
@@ -3390,11 +3391,12 @@ CALCULATE (
 
 ### Canvas and look
 
-- **Size:** every page is 1600 pixels wide. Heights follow the content: Group Overview 1170, Group P&L 2032, Banners 724, Budget vs Actual 1312, Store Profitability 1476, Sales and Customers 858, Cost Structure 974, Controls 1250, Store Detail 688. Tooltip pages are 320 wide.
+- **Size:** every page is 1600 pixels wide. Heights follow the content: Group Overview 1170, Group P&L 2032, Banners 724, Budget vs Actual 1312, Store Profitability 2134, Sales and Customers 858, Cost Structure 974, Controls 1250, Store Detail 688. Tooltip pages are 320 wide.
 - **Background renders:** each page has its own background image (`bg_<page>.png`, drawn at 2x). It holds the dark navigation rail, the white header bar, the page title and the white card behind every visual, card titles and subtitles included. The visuals sit on top with transparent backgrounds, so they carry almost no formatting of their own.
 - **Theme:** `WahatGroup.json` on top of the CY24SU10 base theme. Fonts (Segoe UI type scale), colours, axes, gridlines, legends, cards, tables, matrices, waterfalls and slicers all come from the theme. Change it once and every page follows.
 - **Fixed colours:** Grocery blue, Online orange, Bahrain green. Prior year is grey and dashed. Adverse variance is red, favourable is blue.
 - **Visuals:** native Power BI visuals, plus the Sankey chart published by Microsoft on AppSource for the profit flow. Nothing paid, nothing to install.
+- **Store map:** a shape map with a custom TopoJSON file, `wahat-governorates.json`, stored in the report's resources. It holds the 147 governorates of Saudi Arabia and the 4 governorates of Bahrain, so each store city is its own area rather than a whole region. The store areas are named exactly like the cities in `DimStore`, and every other area stays grey. Each area is shaded by store contribution: the darker, the more it earns. Two gaps in the source data were filled by hand: the Dammam governorate is missing from the source, so it was rebuilt from the space the other Eastern Province governorates leave, and Riffa and Isa Town share one shape, because Bahrain has no open boundaries smaller than a governorate. Shape map is still a Power BI preview feature: turn on **Shape map visual** under Options → Preview features before opening the file. Map boundaries © OpenStreetMap contributors (ODbL), via [geoBoundaries](https://www.geoboundaries.org).
 
 ### Navigation
 
@@ -3424,11 +3426,13 @@ Every visual on a page filters or highlights every other visual. Nothing works a
 
 | Source visual | What happens to the others |
 |---|---|
-| Distribution and ranking charts: store contribution spread (Overview and Stores), contribution by city, best and worst stores, the sales per sqm scatter, sales by category, sales by format, monthly till sales | **Highlight.** The rest of the picture stays visible in faded colour, so you can still see the whole group |
+| Distribution and ranking charts: store contribution spread (Overview and Stores), contribution by city, the store map, best and worst stores, the sales per sqm scatter, sales by category, sales by format, monthly till sales | **Highlight.** The rest of the picture stays visible in faded colour, so you can still see the whole group |
 | Every other chart, card and table | **Filter.** The other visuals show only the matching part |
 | Slicers, buttons and background shapes | Never filtered by a chart click |
 
-In the file this is 627 filter pairs, 81 highlight pairs and 706 deliberate "no filter" pairs (slicers and decorative shapes).
+The store map is the one exception as a target: shape maps can't be highlighted, so every click elsewhere on Store Profitability filters it.
+
+In the file this is 641 filter pairs, 85 highlight pairs and 712 deliberate "no filter" pairs (slicers and decorative shapes).
 
 To make clicks work everywhere, anything a visual is grouped by sits on a dimension, never on a fact:
 - The Sankey takes its links from `DimGroupLine[FlowSource]` and `[FlowDestination]`, so clicking a flow filters the page to those group lines.
@@ -3540,13 +3544,14 @@ report page, 1600 x 1312
 
 #### Store Profitability
 
-report page, 1600 x 1476
+report page, 1600 x 2134
 
 | Visual | Type | Fields |
 |---|---|---|
 | `st_city` | Bar chart | Category: City; Y: Store Contribution |
 | `st_contrib_card` | Card | Data: Store Contribution (label "TOTAL STORE CONTRIBUTION") |
 | `st_loss_card` | Card | Data: Loss-Making Stores |
+| `st_map` | Shape map (custom map `wahat-governorates.json`) | Location: MapArea; Color saturation: Store Contribution; Tooltips: Stores Trading (label "Stores trading"), Store Net Sales (label "Net sales"), Store Contribution Margin % (label "Contribution margin") |
 | `st_median_card` | Card | Data: Median Contribution per Sqm |
 | `st_rank` | Bar chart | Category: StoreCode; Y: Contribution per Sqm |
 | `st_scatter` | Scatter | Category: StoreCode; Series: Banner; Size: Selling Area Sqm; X: Net Sales per Sqm; Y: Store Contribution Margin % |
