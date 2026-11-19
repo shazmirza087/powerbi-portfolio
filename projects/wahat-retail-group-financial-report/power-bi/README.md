@@ -19,7 +19,7 @@ Picture a big family of grocery shops called **Wahat Retail Group**.
 - An **online grocery shop**. Wahat bought it on 1 April 2024. This one is called *Online*.
 - A **bunch of shops in Bahrain**. They run under the Wahat name as a franchise. This one is called *Bahrain*.
 
-That is three businesses under one roof, with 136 shops between them and about 2.6 billion riyals of sales a year.
+That is three businesses under one roof, with 136 shops and warehouses between them over the three years, and about 2.6 billion riyals of sales a year.
 
 The boss (the board) asked two simple questions:
 
@@ -38,7 +38,7 @@ The data is three years of shopping and bookkeeping, from 2023 to 2025.
 
 ## The challenge
 
-Here is why this is hard.
+This is what made it hard:
 
 - **Three businesses, three different accounting systems.** Each one names its money boxes differently. It is like three kids keeping pocket money in three different piggy banks, each with its own labels. Before you can add them up, you have to work out which box in one piggy bank matches which box in the others.
 - **Nobody gave us that matching list.** It only exists as rules written in the rule book, and two of the rules even contradict each other.
@@ -47,7 +47,7 @@ Here is why this is hard.
 - **The budget is written upside down.** Its plus and minus signs are the opposite of the money diary's.
 - **The boss needs to trust it.** If the 2023 and 2024 numbers do not match what the accountants already signed, nobody will believe 2025.
 
-So the job was never just "make some charts". It was: **sort out the mess, prove the numbers are right, and only then show them.**
+So before any chart could be built, the mess had to be sorted out and **the numbers proved right**.
 
 ---
 
@@ -96,7 +96,7 @@ There is also a hidden **Store Detail** page. Right-click any shop and pick *Dri
 
 <img alt="Budget vs Actual page" src="screenshots/04-budget-vs-actual.webp" width="900">
 
-**Store Profitability:** which shops make money and which ones lose it
+**Store Profitability:** which shops make money and which ones lose it, with a map of every store city
 
 <img alt="Store Profitability page" src="screenshots/05-store-profitability.webp" width="900">
 
@@ -118,7 +118,7 @@ There is also a hidden **Store Detail** page. Right-click any shop and pick *Dri
 
 ### 3. A "Can I trust this?" page
 
-Most reports just show numbers and hope for the best. This one has a whole page that proves itself:
+One whole page is there to check the numbers:
 
 - **25 out of 25** signed-off numbers from 2023 and 2024 rebuilt from the raw diary and matched.
 - **100%** of the 14.4 million diary lines sorted into the right place.
@@ -126,7 +126,7 @@ Most reports just show numbers and hope for the best. This one has a whole page 
 - It shows how much each tricky rule in the rule book moves the profit.
 - It checks that what the tills rang up matches what the books recorded.
 
-**Why:** a number nobody trusts is worth nothing. This page lets the finance team say yes with confidence.
+**Why:** if finance can't trust a number, they won't use it. This page gives them the proof.
 
 ### 4. Look at it by day, week, month, quarter or year
 
@@ -173,14 +173,14 @@ Every table and every number tile shows **full numbers, to the last riyal** (⃁
 
 ### 9. Simple sums on the inside, so it stays fast
 
-This is the part a buyer doesn't see, but it is why the report is quick.
+You don't see this part, but it is why the report is quick.
 
 - **All the heavy sorting happens before the data reaches Power BI.** Matching the three account lists, fixing the dinars, finding the right shop for each bill, flipping the budget signs: all of it is done in the data pipeline (see the [data engineering write-up](https://github.com/shazmirza087/dataeng-jupyter), which lives in its own repository).
 - So inside Power BI, almost every number is just **a plain sum**. Sums are the fastest thing Power BI can do.
 - **"Last year", "change vs last year" and "year to date" are written once** and reused by every number. Nobody writes the same formula fifty times.
 - **The P&L table is driven by a list of lines**, not one giant formula full of "if this, then that".
 - **The tables are shaped like a star.** One table of facts sits in the middle, with lookup tables around it. It is the shape Power BI likes best.
-- **Every visual is a standard Power BI visual.** There is nothing to download and nothing to pay for.
+- **Every visual comes from Microsoft.** Most are built in. The profit flow uses Microsoft's free Sankey visual from AppSource, and the store map is the built-in shape map. Nothing to buy.
 
 **Why:** a fast, simple model is cheap to look after. The next person can open it and understand it on day one.
 
@@ -193,11 +193,11 @@ This is the part a buyer doesn't see, but it is why the report is quick.
 
 ---
 
-## What you get, in one breath
+## What you get
 
-A report that a board member can read in five seconds and a finance team can check line by line. You can switch it from days to years with one click, and every click on it updates the whole page. Under the hood it is simple enough that it stays fast and is easy to look after.
+A board member can read the front page in five seconds, and the finance team can check every line. You can switch it from days to years with one click, and clicking anything updates the rest of the page. Inside, it is kept simple, so it stays fast and is easy to look after.
 
-If your business has more than one system, more than one currency, and a boss who wants one clear answer, **this is exactly the kind of thing I build.**
+If your business runs on more than one system or more than one currency and you need one clear set of numbers, **this is the kind of work I do.**
 
 ---
 

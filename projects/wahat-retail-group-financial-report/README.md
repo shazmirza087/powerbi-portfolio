@@ -22,6 +22,6 @@ The pipeline has its own repository, [dataeng-jupyter](https://github.com/shazmi
 
 ### [The Power BI side](power-bi/README.md)
 
-The report has eight pages, each answering one question, from "how are we doing?" to "can I trust these numbers?". You can view it by day, week, month, quarter or year. Every click filters the rest of the page, and there's a reset button on every page. Underneath, the measures are mostly plain sums, so it stays fast. The write-up covers the whole model: every table, relationship, measure and the calculation group, plus every page and visual.
+The report has eight pages, each answering one question, from "how are we doing?" to "can I trust these numbers?". You can view it by day, week, month, quarter or year. Clicking a chart filters or highlights the rest of the page, and every page has a reset button. Underneath, the measures are mostly plain sums, so it stays fast. The write-up covers the whole model: every table, relationship, measure and the calculation group, plus every page and visual.
 
 **[Read the Power BI write-up](power-bi/README.md)**
